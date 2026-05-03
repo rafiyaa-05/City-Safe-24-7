@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOS App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ffe4f3, #f8d4ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .phone {
+      width: 380px;
+      height: 720px;
+      background: #0a0a0a;
+      border-radius: 60px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      position: relative;
+      border: 12px solid #1a1a1a;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #2a1a2f 0%, #0f0a12 80%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-bar {
+      padding: 12px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .notification {
+      background: rgba(255, 255, 255, 0.95);
+      color: #000;
+      margin: 8px 16px;
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .heart {
+      color: #ff4d94;
+      font-size: 20px;
+    }
+
+    .sos-header {
+      text-align: center;
+      color: #ff4d94;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      margin: 20px 0 30px;
+      text-shadow: 0 0 10px #ff4d94;
+    }
+
+    .countdown-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+    }
+
+    .countdown-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 14px solid #ff4d94;
+      border-radius: 50%;
+      box-shadow: 0 0 40px #ff4d94,
+                  0 0 80px rgba(255, 77, 148, 0.6);
+      animation: pulse 2s infinite alternate ease-in-out;
+    }
+
+    .countdown-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 120px;
+      font-weight: 700;
+      color: #ff4d94;
+      text-shadow: 0 0 30px #ff4d94;
+      z-index: 2;
+    }
+
+    .contacts {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 50px 20px 20px;
+      flex-wrap: wrap;
+    }
+
+    .contact-btn {
+      background: rgba(255, 77, 148, 0.15);
+      border: 2px solid #ff4d94;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .contact-btn:hover {
+      background: rgba(255, 77, 148, 0.3);
+      transform: scale(1.05);
+    }
+
+    .police-btn {
+      background: #0066ff;
+      border: none;
+      margin: 10px auto;
+      display: block;
+      width: fit-content;
+      padding: 10px 32px;
+      border-radius: 50px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cancel-btn {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 16px 60px;
+      border-radius: 50px;
+      font-size: 17px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 280px;
+      text-align: center;
+    }
+
+    .cancel-btn:hover {
+      background: rgba(255, 77, 148, 0.2);
+      border-color: #ff4d94;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 40px #ff4d94, 0 0 80px rgba(255, 77, 148, 0.6); }
+      to { box-shadow: 0 0 60px #ff4d94, 0 0 120px rgba(255, 77, 148, 0.8); }
+    }
+
+    .warning {
+      color: #ff4d94;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div>07:18</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span>⋯</span>
+          <span>WiFi</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <!-- Notification -->
+      <div class="notification">
+        <span class="heart">❤️</span>
+        <div>
+          <strong>Area Safe</strong><br>
+          Andheri West is currently safe. AI monitoring active.
+        </div>
+        <div style="margin-left: auto; font-size: 12px; color: #666;">Now</div>
+      </div>
+
+      <!-- SOS Activating -->
+      <div class="warning">▲ SOS ACTIVATING ▲</div>
+
+      <!-- Countdown -->
+      <div class="countdown-container">
+        <div class="countdown-circle"></div>
+        <div class="countdown-number" id="countdown">4</div>
+      </div>
+
+      <!-- Contact Buttons -->
+      <div class="contacts">
+        <button class="contact-btn">
+          ❤️ Ammi (Mom)
+        </button>
+        <button class="contact-btn">
+          ❤️ Anjali (Sister)
+        </button>
+      </div>
+
+      <button class="police-btn">
+        🚨 Police 100
+      </button>
+
+      <!-- Cancel Button -->
+      <button class="cancel-btn" onclick="cancelSOS()">
+        Cancel / रद्द करें
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let count = 4;
+    const countdownEl = document.getElementById('countdown');
+
+    const timer = setInterval(() => {
+      count--;
+      countdownEl.textContent = count;
+      
+      if (count <= 0) {
+        clearInterval(timer);
+        countdownEl.style.color = '#ff0000';
+        countdownEl.textContent = 'SOS!';
+      }
+    }, 1000);
+
+    function cancelSOS() {
+      if (confirm("Are you sure you want to cancel the SOS?")) {
+        alert("SOS cancelled successfully.");
+        // In a real app, you would stop the countdown and close the alert
+      }
+    }
+
+    // Optional: Add some vibration effect on load (visual only)
+    setTimeout(() => {
+      document.querySelector('.countdown-circle').style.animation = 'pulse 1.2s infinite alternate';
+    }, 500);
+  </script>
+</body>
+</html>

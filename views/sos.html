@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS Activating – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: #0a0a0a; color: #fff; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .sos-page { max-width: 500px; width: 100%; padding: 32px 24px; text-align: center; }
+  .sos-warning { color: #ff4d94; font-size: 14px; font-weight: 700; letter-spacing: 3px; margin-bottom: 20px; }
+  .countdown-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto 28px; }
+  .countdown-circle { position: absolute; inset: 0; border: 12px solid #ff4d94; border-radius: 50%; box-shadow: 0 0 40px #ff4d94, 0 0 80px rgba(255,77,148,.5); animation: glow 2s infinite alternate; }
+  @keyframes glow { from{box-shadow:0 0 40px #ff4d94,0 0 80px rgba(255,77,148,.5)} to{box-shadow:0 0 60px #ff4d94,0 0 120px rgba(255,77,148,.7)} }
+  .countdown-num { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size: 100px; font-weight: 800; color: #ff4d94; }
+  .notif { background: rgba(255,255,255,.95); color: #000; border-radius: 14px; padding: 14px 18px; display:flex; align-items:center; gap:12px; margin-bottom:20px; text-align:left; }
+  .contact-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .contact-btn { background: rgba(255,77,148,.15); border: 2px solid #ff4d94; color: #fff; padding: 10px 24px; border-radius: 50px; font-size: 14px; cursor: pointer; }
+  .police-btn { background: #0066ff; border: none; color: #fff; padding: 10px 28px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+  .cancel-btn { background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 16px 60px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; }
+  .cancel-btn:hover { background: rgba(255,77,148,.2); border-color: #ff4d94; }
+
+  /* Recording indicator */
+  .rec-indicator {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: rgba(255, 45, 122, 0.15);
+    border: 1.5px solid #ff4d94;
+    border-radius: 12px;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+    font-size: 14px; font-weight: 600; color: #ff9cc4;
+  }
+  .rec-dot {
+    width: 12px; height: 12px; background: #ff4d94; border-radius: 50%;
+    animation: recBlink 1s infinite; flex-shrink: 0;
+  }
+  @keyframes recBlink { 0%,100%{opacity:1} 50%{opacity:.15} }
+  .rec-timer { margin-left: auto; font-variant-numeric: tabular-nums; color: #ff4d94; font-weight: 700; }
+
+  .rec-indicator.inactive {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.2);
+    color: #888;
+  }
+  .rec-indicator.inactive .rec-dot { background: #555; animation: none; }
+</style>
+</head>
+<body>
+<div class="sos-page">
+
+  <!-- Notification -->
+  <div class="notif">
+    <span style="font-size:20px;">❤️</span>
+    <div><strong>Emergency Alert Sent</strong><br><span style="font-size:13px; color:#666;">Contacts notified · AI monitoring active.</span></div>
+    <div style="margin-left:auto; font-size:12px; color:#999;">Now</div>
+  </div>
+
+  <!-- Recording indicator -->
+  <div class="rec-indicator" id="recIndicator">
+    <div class="rec-dot"></div>
+    <span>Voice recording in progress...</span>
+    <span class="rec-timer" id="recTimer">0:00</span>
+  </div>
+
+  <div class="sos-warning">▲ SOS ACTIVATING ▲</div>
+
+  <div class="countdown-wrap">
+    <div class="countdown-circle"></div>
+    <div class="countdown-num" id="countdown">4</div>
+  </div>
+
+  <div class="contact-btns">
+    <button class="contact-btn">❤️ Ammi (Mom)</button>
+    <button class="contact-btn">❤️ Anjali (Sister)</button>
+  </div>
+
+  <div><button class="police-btn">🚨 Police 100</button></div>
+
+  <button class="cancel-btn" onclick="cancelSOS()">Cancel / रद्द करें</button>
+</div>
+
+<script>
+// ── Countdown ─────────────────────────────────────────────────────────────────
+let count = 4;
+const el = document.getElementById('countdown');
+const countTimer = setInterval(() => {
+  count--;
+  el.textContent = count;
+  if (count <= 0) {
+    clearInterval(countTimer);
+    el.style.color = '#ff0000';
+    el.textContent = 'SOS!';
+    el.style.fontSize = '60px';
+  }
+}, 1000);
+
+// ── Recording indicator timer ─────────────────────────────────────────────────
+let recSecs = 0;
+let recInterval = null;
+let sosMediaRecorder = null;
+let sosAudioChunks = [];
+
+function startRecIndicator() {
+  recSecs = 0;
+  recInterval = setInterval(() => {
+    recSecs++;
+    const m = Math.floor(recSecs / 60);
+    const s = recSecs % 60;
+    document.getElementById('recTimer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+}
+
+// Check if recording was started on index.html
+// If yes, show indicator. If not (e.g. direct navigation), start fresh recording here.
+window.addEventListener('load', () => {
+  const wasRecording = sessionStorage.getItem("sosRecordingActive");
+
+  if (wasRecording === "1") {
+    // Recording already running from index.html — just show the indicator
+    startRecIndicator();
+
+    // Auto-send at 15s from page load (recording started ~400ms before navigation)
+    setTimeout(() => {
+      const ind = document.getElementById('recIndicator');
+      const span = ind.querySelector('span');
+      span.textContent = '✅ Sent to emergency contacts!';
+      setTimeout(() => { span.textContent = 'Voice recording in progress...'; }, 3000);
+    }, 15000);
+  } else {
+    // SOS opened directly (e.g. from sos1.html or direct link) — start recording now
+    startFreshRecording();
+  }
+});
+
+function startFreshRecording() {
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    sosAudioChunks = [];
+    sosMediaRecorder = new MediaRecorder(stream);
+    sosMediaRecorder.ondataavailable = e => { if (e.data.size > 0) sosAudioChunks.push(e.data); };
+    sosMediaRecorder.onstart = () => {
+      sessionStorage.setItem("sosRecordingActive", "1");
+      startRecIndicator();
+
+      // Auto-send at 15 seconds
+      setTimeout(() => {
+        if (sosMediaRecorder && sosMediaRecorder.state === 'recording') {
+          sosMediaRecorder.requestData(); // flush buffered data
+          setTimeout(() => {
+            if (sosAudioChunks.length > 0) {
+              sendRecording([...sosAudioChunks]);
+              // Show sent confirmation on screen
+              const ind = document.getElementById('recIndicator');
+              const span = ind.querySelector('span');
+              const prev = span.textContent;
+              span.textContent = '✅ Sent to emergency contacts!';
+              setTimeout(() => { span.textContent = prev; }, 3000);
+            }
+          }, 150);
+        }
+      }, 15000);
+    };
+    sosMediaRecorder.onstop = () => {
+      clearInterval(recInterval);
+      sessionStorage.removeItem("sosRecordingActive");
+      sendRecording(sosAudioChunks);
+      stream.getTracks().forEach(t => t.stop());
+    };
+    sosMediaRecorder.start(1000);
+  }).catch(() => {
+    // No mic access — mark indicator as inactive
+    document.getElementById('recIndicator').classList.add('inactive');
+    document.getElementById('recIndicator').querySelector('span').textContent = 'Microphone unavailable';
+    clearInterval(recInterval);
+  });
+}
+
+function stopAllRecording() {
+  clearInterval(recInterval);
+  // Stop recorder started on this page
+  if (sosMediaRecorder && sosMediaRecorder.state === 'recording') {
+    sosMediaRecorder.stop();
+  }
+  // Signal index.html recorder to stop (it checks this flag on focus)
+  sessionStorage.setItem("sosRecordingActive", "0");
+}
+
+async function sendRecording(chunks) {
+  if (!chunks || chunks.length === 0) return;
+  const blob = new Blob(chunks, { type: 'audio/webm' });
+  const formData = new FormData();
+  formData.append('recording', blob, `sos-recording-${Date.now()}.webm`);
+  formData.append('location', 'SOS Location');
+  try {
+    await fetch('/api/recording/send', { method: 'POST', body: formData });
+  } catch {}
+}
+
+// ── Cancel SOS ────────────────────────────────────────────────────────────────
+function cancelSOS() {
+  if (confirm("Are you sure you want to cancel the SOS?")) {
+    clearInterval(countTimer);
+    stopAllRecording();
+    const sosId = sessionStorage.getItem("sosId");
+    if (sosId) { fetch(`/api/sos/cancel/${sosId}`, { method: "POST" }); sessionStorage.removeItem("sosId"); }
+    window.location.href = "index.html";
+  }
+}
+</script>
+</body>
+</html>

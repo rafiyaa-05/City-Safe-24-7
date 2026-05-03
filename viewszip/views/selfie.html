@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Selfie Verification</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4c9d6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #ffe6ef;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.back {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.step {
+  margin-left: auto;
+  color: #ff2c8b;
+  font-size: 12px;
+}
+
+/* PROGRESS */
+.progress {
+  height: 4px;
+  background: #ffd1e3;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 75%;
+  height: 100%;
+  background: #ff2c8b;
+  position: absolute;
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  font-size: 20px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* CAMERA CONTAINER */
+.camera-container {
+  width: 100%;
+  height: 300px;
+  background: #000;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+#camera {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.camera-fallback {
+  color: white;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* CAPTURE BTN */
+.capture-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* PREVIEW */
+.preview-container {
+  display: none;
+  width: 100%;
+  margin: 15px 0;
+}
+
+#preview {
+  width: 100%;
+  border-radius: 20px;
+  max-height: 250px;
+  object-fit: cover;
+}
+
+/* BUTTONS */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.confirm-btn {
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+}
+
+.retake-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #666;
+}
+
+/* NOTE */
+.note {
+  background: #f3e4f6;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #666;
+  margin: 10px 0;
+}
+
+/* BACK BTN */
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 30px;
+  border: 1px solid #ff9cc4;
+  margin-top: 10px;
+  background: transparent;
+  color: #ff2c8b;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="back" onclick="goBack()">←</div>
+    <div class="title">Live Selfie Verification</div>
+    <div class="step">Step 4 of 6</div>
+  </div>
+
+  <div class="progress"></div>
+
+  <h2>Live Selfie 📸</h2>
+
+  <div class="sub">
+    Take a clear selfie with good lighting. Face must be visible and centered.
+  </div>
+
+  <div class="camera-container">
+    <video id="camera" autoplay playsinline></video>
+    <div class="camera-fallback" id="fallback" style="display:none;">
+      📷 Camera access required
+    </div>
+  </div>
+
+  <button class="capture-btn" id="captureBtn" onclick="captureSelfie()">📸 Capture Selfie</button>
+
+  <!-- Preview Section -->
+  <div class="preview-container" id="previewContainer">
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="preview" alt="Selfie preview">
+    
+    <div class="button-group">
+      <button class="retake-btn" onclick="retakeSelfie()">🔄 Retake</button>
+      <button class="confirm-btn" onclick="confirmSelfie()">✔ Confirm</button>
+    </div>
+  </div>
+
+  <div class="note">
+    🔒 Encrypted & secure · Biometric match verified · Only you can see this.
+  </div>
+
+  <button class="back-btn" onclick="goBack()">← Back</button>
+
+</div>
+
+<script>
+let stream = null;
+let selfieData = null;
+
+// Request camera access
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user" },
+      audio: false
+    });
+    document.getElementById("camera").srcObject = stream;
+    document.getElementById("fallback").style.display = "none";
+  } catch (err) {
+    console.error("Camera error:", err);
+    document.getElementById("fallback").style.display = "block";
+    alert("⚠ Camera access required. Please allow camera permission.");
+  }
+}
+
+// Capture selfie
+function captureSelfie() {
+  const video = document.getElementById("camera");
+  const canvas = document.getElementById("canvas");
+  const context = canvas.getContext("2d");
+
+  if (!video.srcObject) {
+    alert("❌ Camera not ready");
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  context.drawImage(video, 0, 0);
+
+  selfieData = canvas.toDataURL("image/jpeg");
+  document.getElementById("preview").src = selfieData;
+  document.getElementById("previewContainer").style.display = "block";
+}
+
+// Retake selfie
+function retakeSelfie() {
+  document.getElementById("previewContainer").style.display = "none";
+  selfieData = null;
+}
+
+// Confirm and proceed
+function confirmSelfie() {
+  if (!selfieData) {
+    alert("❌ No selfie captured");
+    return;
+  }
+
+  // Store selfie in sessionStorage
+  sessionStorage.setItem("volunteerSelfie", selfieData);
+
+  alert("✅ Selfie confirmed!");
+  window.location.href = "additional-details.html";
+}
+
+// Back button
+function goBack() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+  window.location.href = "otp.html";
+}
+
+// Initialize camera on load
+window.addEventListener("load", startCamera);
+
+// Cleanup on unload
+window.addEventListener("beforeunload", () => {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+});
+</script>
+
+</body>
+</html>

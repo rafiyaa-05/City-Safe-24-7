@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City Safe – Your Safety Guardian</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #ff6fa5, #f8a9c4, #fbd0da); }
+  .splash { text-align: center; color: #fff; padding: 40px; }
+  .shield { font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+  h1 { font-size: 48px; font-weight: 800; margin-bottom: 8px; }
+  .sub { font-size: 18px; opacity: .9; margin-bottom: 6px; }
+  .tagline { font-size: 16px; opacity: .85; margin-bottom: 40px; }
+  .dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 40px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.4); }
+  .dot.active { background: #fff; }
+  .loader { width: 48px; height: 48px; border: 4px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .emojis { font-size: 24px; margin-bottom: 20px; opacity: .7; }
+</style>
+</head>
+<body>
+<div class="splash">
+  <div class="emojis">💖 ✨ 🌸</div>
+  <div class="shield">🛡️</div>
+  <h1>City Safe</h1>
+  <div class="sub">by Womenathon Innovations</div>
+  <div class="tagline">💞 Your Pink Shield of Safety · 24×7</div>
+  <div class="dots">
+    <span class="dot"></span><span class="dot active"></span><span class="dot"></span>
+  </div>
+  <div class="loader"></div>
+</div>
+<script>
+  setTimeout(() => { window.location.href = "login.html"; }, 3000);
+</script>
+</body>
+</html>

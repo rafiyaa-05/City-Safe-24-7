@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .sos-section { text-align: center; padding: 40px 0; position: relative; }
+  .sos-rings { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+  .insight-box { background: linear-gradient(135deg, #fff8fb, #ffe6ef); border: 1px solid #f5c0d4; border-radius: 16px; padding: 20px; }
+  .ai-alert { background: #fff3ec; border-left: 5px solid #ff8c42; border-radius: 12px; padding: 16px; cursor: pointer; transition: all .2s; }
+  .ai-alert:hover { background: #ffe8d8; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html" class="active">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container">
+
+  <!-- Header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <div>
+      <h1 style="font-size:26px; font-weight:700;">City Safe <span class="text-pink">AI 💕</span></h1>
+      <div class="text-muted" style="font-size:14px;">AI Shield Active · Andheri West</div>
+    </div>
+    <div id="userGreet" style="font-size:14px; color:var(--muted);"></div>
+  </div>
+
+  <!-- AI Alert -->
+  <div class="ai-alert mb-24" onclick="window.location.href='alert.html'">
+    <strong>⚠️ AI Route Risk:</strong> Andheri–Dadar after 8 PM<br>
+    <span style="font-size:13px; color:#c05000;">High risk detected. Alternate route recommended. Tap to view →</span>
+  </div>
+
+  <div class="grid-2" style="gap:32px; align-items:start;">
+
+    <!-- LEFT: SOS + Quick Actions -->
+    <div>
+      <!-- SOS -->
+      <div class="card mb-24">
+        <div class="sos-section">
+          <div class="sos-rings">
+            <div class="sos-ring"></div>
+            <div class="sos-ring"></div>
+          </div>
+          <button class="sos-btn" onclick="triggerSOS()">SOS</button>
+          <div style="margin-top:16px; font-size:13px; color:var(--muted);">Hold to activate emergency alert</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card mb-24">
+        <div class="section-title">Quick Actions</div>
+        <div class="grid-4" style="gap:12px;">
+          <div class="quick-action" onclick="triggerFakeCall()">
+            <div class="icon">📞</div><span>Fake Call</span>
+          </div>
+          <div class="quick-action" onclick="triggerVoiceRecording()">
+            <div class="icon">🎤</div><span>Voice Rec</span>
+          </div>
+          <div class="quick-action" onclick="openHelplines()">
+            <div class="icon">🆘</div><span>Helplines</span>
+          </div>
+          <div class="quick-action" onclick="window.location.href='guardian.html'">
+            <div class="icon">👥</div><span>Community</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Numbers -->
+      <div class="card">
+        <div class="section-title">Emergency Numbers</div>
+        <div class="emergency-grid">
+          <div class="emergency-num"><b>1091</b><span>Women</span></div>
+          <div class="emergency-num"><b>100</b><span>Police</span></div>
+          <div class="emergency-num"><b>112</b><span>Emergency</span></div>
+          <div class="emergency-num"><b>1098</b><span>Child</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Insight + Alerts -->
+    <div>
+      <div class="insight-box mb-24">
+        <div style="font-weight:700; margin-bottom:8px;">✨ AI Insight</div>
+        <p style="font-size:14px; line-height:1.7; color:var(--muted);">
+          Based on tonight's conditions, Marine Drive is the safest route.
+          25 Guardian Volunteers active nearby. AI Shield is monitoring your area.
+        </p>
+      </div>
+
+      <div class="card mb-24">
+        <div class="section-title">Live Safety Alerts</div>
+        <div class="alert-card high">
+          <div class="alert-time">8 PM</div>
+          <h4>🔴 High Risk: Andheri SV Road</h4>
+          <p>3 incidents in last 2 hours. Street lighting outage near Lokhandwala.</p>
+          <span class="alert-badge badge-high">HIGH RISK</span>
+        </div>
+        <div class="alert-card moderate">
+          <div class="alert-time">Now</div>
+          <h4>🟡 Crowd Surge: Dadar Station</h4>
+          <p>Unusual crowd density at Dadar Station exit.</p>
+          <span class="alert-badge badge-moderate">MODERATE</span>
+        </div>
+        <div class="alert-card safe">
+          <div class="alert-time">6:45 PM</div>
+          <h4>🟢 Safe Route: Marine Drive</h4>
+          <p>High police visibility tonight. Safe until 11 PM.</p>
+          <span class="alert-badge badge-safe">SAFE</span>
+        </div>
+        <a href="alert.html" class="btn btn-outline btn-full mt-16" style="font-size:13px;">View All Alerts →</a>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Voice Recording</div>
+        <div id="recordingArea"></div>
+        <button class="btn btn-outline btn-full" onclick="triggerVoiceRecording()">🎤 Start / Stop Recording</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+let mediaRecorder = null, audioChunks = [];
+
+async function triggerSOS() {
+  window.location.href = 'sos.html';
+  try {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      await fetch("/api/sos/trigger", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, address: "Current location" }) });
+    }, async () => {
+      await fetch("/api/sos/trigger", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ address: "Location unavailable" }) });
+    });
+  } catch(e) {}
+}
+
+function triggerVoiceRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); return; }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      const area = document.getElementById('recordingArea');
+      area.innerHTML = '';
+      const audio = document.createElement('audio'); audio.controls = true; audio.src = url;
+      const dl = document.createElement('a'); dl.href = url; dl.download = 'City Safe-recording.webm'; dl.textContent = '⬇️ Download'; dl.className = 'btn btn-outline btn-sm'; dl.style.marginTop = '8px'; dl.style.display = 'inline-block';
+      area.appendChild(audio); area.appendChild(dl);
+      stream.getTracks().forEach(t => t.stop());
+    };
+    mediaRecorder.start();
+    alert('🎤 Recording started. Click again to stop.');
+  }).catch(() => alert('Microphone access required.'));
+}
+
+function openHelplines() {
+  alert('Emergency Numbers:\n📞 1091 – Women Helpline\n📞 100 – Police\n📞 112 – Emergency\n📞 1098 – Child Helpline');
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+
+window.addEventListener('load', async () => {
+  if (localStorage.getItem('dark') === '1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent = '☀️'; }
+  try {
+    const res = await fetch('/api/me');
+    const data = await res.json();
+    if (data.loggedIn) document.getElementById('userGreet').textContent = '👋 Hello, ' + data.user.name;
+  } catch(e) {}
+});
+</script>
+</body>
+</html>

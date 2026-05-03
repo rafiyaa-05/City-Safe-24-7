@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aadhaar Verification – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .upload-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .side-box { border: 2px dashed #e8d0da; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; transition: all .2s; }
+  .side-box:hover, .side-box.active { border-color: var(--pink); background: var(--pink-pale); }
+  .side-box .icon { font-size: 28px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="volunteer.html">← Back</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+<div class="page">
+<div class="container-sm">
+
+  <div class="step-header">
+    <a href="volunteer.html" class="step-back">←</a>
+    <div class="step-title">Aadhaar Verification</div>
+    <div class="step-badge">Step 2 of 6</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Aadhaar Verification</span><span>40%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:6px;">Aadhaar Card Verification 🆔</h2>
+    <p class="text-muted" style="font-size:14px; margin-bottom:20px;">Your Aadhaar details are verified with UIDAI checksum. No data is stored on our servers.</p>
+
+    <div class="notice notice-info mb-24">
+      🏛️ <strong>UIDAI Checksum Verification</strong><br>
+      End-to-end encrypted · Only age, name & address verified · No biometrics stored
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Aadhaar Number (12 digits) *</label>
+      <input type="text" id="aadhaar" class="form-input" maxlength="14" placeholder="1234 5678 9012" style="font-size:20px; letter-spacing:4px; text-align:center;">
+    </div>
+
+    <label class="form-label">Upload Aadhaar Card</label>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="frontInput" accept="image/*,.pdf" style="display:none" onchange="handleUpload('front', this)">
+    <input type="file" id="backInput"  accept="image/*,.pdf" style="display:none" onchange="handleUpload('back', this)">
+
+    <div class="upload-sides">
+      <!-- Front -->
+      <div class="side-box" id="frontBox" onclick="document.getElementById('frontInput').click()">
+        <div class="icon" id="frontIcon">📤</div>
+        <div style="font-weight:600;">Front Side</div>
+        <div style="font-size:12px; color:var(--muted);">आगे की तरफ</div>
+        <div id="frontName" style="font-size:11px; color:var(--pink); margin-top:6px; word-break:break-all;"></div>
+        <div id="frontPreview" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- Back -->
+      <div class="side-box" id="backBox" onclick="document.getElementById('backInput').click()">
+        <div class="icon" id="backIcon">📤</div>
+        <div style="font-weight:600;">Back Side</div>
+        <div style="font-size:12px; color:var(--muted);">पीछे की तरफ</div>
+        <div id="backName" style="font-size:11px; color:var(--pink); margin-top:6px; word-break:break-all;"></div>
+        <div id="backPreview" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Upload status -->
+    <div id="uploadStatus" style="font-size:13px; color:var(--muted); margin-bottom:16px; display:none;">
+      <span id="uploadMsg"></span>
+    </div>
+
+    <div class="notice mb-24">
+      🔒 256-bit encrypted · UIDAI checksum verified · Only verifies age, name & address.
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" onclick="verify()">🆔 Verify with Aadhaar →</button>
+    <a href="volunteer.html" class="btn btn-outline btn-full mt-16">← Back</a>
+  </div>
+
+</div>
+</div>
+<script>
+// Verhoeff algorithm
+const verhoeff = {
+  d:[[0,1,2,3,4,5,6,7,8,9],[1,2,3,4,0,6,7,8,9,5],[2,3,4,0,1,7,8,9,5,6],[3,4,0,1,2,8,9,5,6,7],[4,0,1,2,3,9,5,6,7,8],[5,9,8,7,6,0,4,3,2,1],[6,5,9,8,7,1,0,4,3,2],[7,6,5,9,8,2,1,0,4,3],[8,7,6,5,9,3,2,1,0,4],[9,8,7,6,5,4,3,2,1,0]],
+  p:[[0,1,2,3,4,5,6,7,8,9],[1,5,7,6,2,8,3,0,9,4],[5,8,0,3,7,9,6,1,4,2],[8,9,1,6,0,4,3,5,2,7],[9,4,5,3,1,2,6,8,7,0],[4,2,8,6,5,7,3,9,0,1],[2,7,9,3,8,0,6,4,1,5],[7,0,4,6,9,1,3,2,5,8]],
+  inv:[0,4,3,2,1,9,8,7,6,5]
+};
+function verhoeffCheck(num) {
+  let c = 0;
+  num.split("").reverse().map(Number).forEach((d,i) => { c = verhoeff.d[c][verhoeff.p[i%8][d]]; });
+  return c === 0;
+}
+function validateAadhaar(num) {
+  if (!/^\d{12}$/.test(num)) return { valid:false, reason:"Aadhaar must be exactly 12 digits." };
+  if (num[0]==="0"||num[0]==="1") return { valid:false, reason:"Aadhaar number cannot start with 0 or 1." };
+  if (/^(\d)\1{11}$/.test(num)) return { valid:false, reason:"Invalid Aadhaar number." };
+  if (!verhoeffCheck(num)) return { valid:false, reason:"Invalid Aadhaar number. Checksum failed." };
+  return { valid:true };
+}
+
+document.getElementById("aadhaar").addEventListener("input", function(e) {
+  let v = e.target.value.replace(/\D/g,"").substring(0,12);
+  v = v.replace(/(.{4})/g,"$1 ").trim();
+  e.target.value = v;
+});
+
+let frontUploaded = false, backUploaded = false;
+
+function handleUpload(side, input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const allowed = ['image/jpeg','image/png','image/jpg','application/pdf'];
+  if (!allowed.includes(file.type)) {
+    alert('❌ Only JPG, PNG or PDF files are allowed.');
+    input.value = '';
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('❌ File too large. Max 5MB allowed.');
+    input.value = '';
+    return;
+  }
+
+  const box   = document.getElementById(side + 'Box');
+  const icon  = document.getElementById(side + 'Icon');
+  const name  = document.getElementById(side + 'Name');
+  const prev  = document.getElementById(side + 'Preview');
+
+  // Mark box as uploaded
+  box.classList.add('active');
+  icon.textContent = '✅';
+  name.textContent = file.name;
+
+  // Show image preview (not for PDF)
+  prev.innerHTML = '';
+  if (file.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.style.cssText = 'width:100%; border-radius:8px; max-height:100px; object-fit:cover;';
+    prev.appendChild(img);
+  } else {
+    prev.innerHTML = '<div style="font-size:11px; color:#888;">📄 PDF selected</div>';
+  }
+
+  // Store in sessionStorage as base64 for backend submission
+  const reader = new FileReader();
+  reader.onload = () => {
+    sessionStorage.setItem(`aadhaar_${side}`, reader.result);
+    if (side === 'front') frontUploaded = true;
+    else backUploaded = true;
+    updateUploadStatus();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateUploadStatus() {
+  const el = document.getElementById('uploadStatus');
+  const msg = document.getElementById('uploadMsg');
+  el.style.display = 'block';
+  if (frontUploaded && backUploaded) {
+    msg.innerHTML = '✅ Both sides uploaded successfully.';
+    msg.style.color = '#28c76f';
+  } else if (frontUploaded) {
+    msg.innerHTML = '⚠️ Front uploaded. Please upload the back side too.';
+    msg.style.color = '#cc8800';
+  } else if (backUploaded) {
+    msg.innerHTML = '⚠️ Back uploaded. Please upload the front side too.';
+    msg.style.color = '#cc8800';
+  }
+}
+
+function verify() {
+  const raw = document.getElementById("aadhaar").value.replace(/\s/g,"");
+  const result = validateAadhaar(raw);
+  if (!result.valid) { alert("❌ " + result.reason); return; }
+
+  if (!frontUploaded) { alert("❌ Please upload the front side of your Aadhaar card."); return; }
+  if (!backUploaded)  { alert("❌ Please upload the back side of your Aadhaar card.");  return; }
+
+  sessionStorage.setItem("aadhaarLast4", raw.slice(-4));
+  alert("✅ Aadhaar verified. Sending OTP...");
+  window.location.href = 'otp.html';
+}
+
+function toggleDark() { const d = document.body.classList.toggle('dark'); localStorage.setItem('dark', d?'1':'0'); document.querySelector('.dark-btn').textContent = d?'☀️':'🌙'; }
+window.addEventListener('load', () => { if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; } });
+</script>
+</body>
+</html>

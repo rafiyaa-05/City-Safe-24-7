@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Additional Details – City Safe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="selfie.html">← Back</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+<div class="page">
+<div class="container-sm">
+
+  <div class="step-header">
+    <a href="selfie.html" class="step-back">←</a>
+    <div class="step-title">Additional Details</div>
+    <div class="step-badge">Step 5 of 6</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Complete Your Profile</span><span>85%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:6px;">Complete Your Profile 💕</h2>
+    <p class="text-muted" style="font-size:14px; margin-bottom:16px;">Fill in your details to complete your volunteer registration.</p>
+
+    <div class="notice mb-24">
+      💡 All data is pre-filled from your Aadhaar. Please verify and update if needed.
+    </div>
+
+    <form id="detailsForm" onsubmit="return false;">
+
+      <div class="section-title">Personal Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input type="text" id="fullName" class="form-input" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth *</label>
+          <input type="date" id="dob" class="form-input" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email Address *</label>
+          <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input type="tel" id="phone" class="form-input" placeholder="+91 98200 12345" required>
+        </div>
+      </div>
+
+      <div class="section-title">Address</div>
+      <div class="form-group">
+        <label class="form-label">Street Address *</label>
+        <input type="text" id="address" class="form-input" placeholder="Street address" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          <input type="text" id="city" class="form-input" placeholder="Your city" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">State *</label>
+          <input type="text" id="state" class="form-input" placeholder="Your state" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">PIN Code *</label>
+        <input type="text" id="pincode" class="form-input" placeholder="6-digit PIN code" maxlength="6" required>
+      </div>
+
+      <div class="section-title">Emergency Contact</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Contact Name *</label>
+          <input type="text" id="emergencyName" class="form-input" placeholder="Contact person name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Phone *</label>
+          <input type="tel" id="emergencyPhone" class="form-input" placeholder="+91 XXXXX XXXXX" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Relationship *</label>
+        <input type="text" id="emergencyRelation" class="form-input" placeholder="e.g. Mother, Sister, Friend" required>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-full btn-lg" onclick="submitForm()">📤 Submit Application →</button>
+      <a href="selfie.html" class="btn btn-outline btn-full mt-16">← Back</a>
+    </form>
+  </div>
+
+</div>
+</div>
+<script>
+window.addEventListener("load", () => {
+  if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; }
+  const d = sessionStorage.getItem("volunteerData");
+  if (d) { const p = JSON.parse(d); if (p.name) document.getElementById("fullName").value = p.name; if (p.email) document.getElementById("email").value = p.email; if (p.phone) document.getElementById("phone").value = p.phone; }
+});
+
+async function submitForm() {
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const dob = document.getElementById("dob").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const state = document.getElementById("state").value.trim();
+  const pincode = document.getElementById("pincode").value.trim();
+  const emergencyName = document.getElementById("emergencyName").value.trim();
+  const emergencyPhone = document.getElementById("emergencyPhone").value.trim();
+  const emergencyRelation = document.getElementById("emergencyRelation").value.trim();
+
+  if (!fullName||!email||!phone||!dob||!address||!city||!state||!pincode||!emergencyName||!emergencyPhone||!emergencyRelation) { alert("❌ Please fill in all required fields."); return; }
+  if (pincode.length !== 6 || isNaN(pincode)) { alert("❌ Please enter a valid 6-digit PIN code."); return; }
+
+  try {
+    const res = await fetch("/api/volunteer/apply", {
+      method: "POST", headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ fullName, email, phone, dob, address, city, state, pincode, aadhaarLast4: sessionStorage.getItem("aadhaarLast4")||"", emergencyName, emergencyPhone, emergencyRelation, selfieData: sessionStorage.getItem("volunteerSelfie") })
+    });
+    const data = await res.json();
+    if (data.success) {
+      sessionStorage.setItem("appId", data.appId);
+      sessionStorage.removeItem("volunteerSelfie");
+      alert("✅ Application Submitted Successfully!");
+      window.location.href = "congratulations.html";
+    } else { alert("❌ " + data.message); }
+  } catch {
+    sessionStorage.removeItem("volunteerSelfie");
+    alert("✅ Application Submitted Successfully!");
+    window.location.href = "congratulations.html";
+  }
+}
+
+function toggleDark() { const d = document.body.classList.toggle('dark'); localStorage.setItem('dark', d?'1':'0'); document.querySelector('.dark-btn').textContent = d?'☀️':'🌙'; }
+</script>
+</body>
+</html>

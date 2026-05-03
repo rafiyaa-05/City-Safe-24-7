@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Congratulations</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #ff6fa5, #f8a9c4, #fbd0da);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: linear-gradient(160deg, #ff6fa5, #f8a9c4, #fbd0da);
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating shapes */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+}
+
+.circle.big {
+  width: 250px;
+  height: 250px;
+  top: -60px;
+  right: -60px;
+}
+
+.circle.small {
+  width: 150px;
+  height: 150px;
+  bottom: -40px;
+  left: -40px;
+}
+
+/* Content */
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Icon animation */
+.icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: bounce 0.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 18px;
+  opacity: 0.95;
+  margin-bottom: 15px;
+}
+
+.message {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 15px 0;
+  line-height: 1.6;
+}
+
+/* Details */
+.details {
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 15px;
+  margin: 20px 0;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.detail-row {
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.label {
+  opacity: 0.8;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.value {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.btn {
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: rgba(255,255,255,0.3);
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-primary:hover {
+  background: white;
+  color: #ff2c8b;
+}
+
+.btn-secondary {
+  background: white;
+  color: #ff2c8b;
+}
+
+.btn-secondary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Status badge */
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-top: 10px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <!-- Background shapes -->
+  <div class="circle big"></div>
+  <div class="circle small"></div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <div class="icon">🎉</div>
+
+    <h1>Congratulations! 💕</h1>
+
+    <div class="subtitle">Application Submitted Successfully</div>
+
+    <div class="message">
+      Your volunteer registration has been submitted to our team. You will receive updates via email and SMS.
+    </div>
+
+    <!-- Application Details -->
+    <div class="details">
+      <div class="detail-row">
+        <span class="label">Application ID</span>
+        <span class="value" id="appId">HFZ-VOL-2026-XXXX</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="label">Status</span>
+        <span class="value">⏳ Under Review</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="label">Verification Status</span>
+        <span class="value">✅ Document Verified</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="label">Next Step</span>
+        <span class="value">Background Check (2-3 days)</span>
+      </div>
+    </div>
+
+    <div class="message">
+      You will be notified once your background verification is complete and you become an official Guardian Volunteer.
+    </div>
+
+    <div class="badge">✨ Thank You for Joining Hifazat! ✨</div>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button class="btn btn-secondary" onclick="goHome()">🏠 Go to Homepage</button>
+      <button class="btn btn-primary" onclick="viewApplicationStatus()">📋 View Application Status</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Generate application ID
+function generateAppId() {
+  const timestamp = Date.now().toString().slice(-4);
+  return `HFZ-VOL-${new Date().getFullYear()}-${timestamp}`;
+}
+
+window.addEventListener("load", () => {
+  document.getElementById("appId").textContent = generateAppId();
+});
+
+function goHome() {
+  window.location.href = "index.html";
+}
+
+function viewApplicationStatus() {
+  alert("📋 Your application status will be visible in the Profile section.");
+}
+</script>
+
+</body>
+</html>

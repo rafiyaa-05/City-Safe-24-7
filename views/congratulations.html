@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Congratulations – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background: linear-gradient(135deg, #ff6fa5, #f8a9c4, #fbd0da); }
+  .congrats-wrap { max-width: 600px; width: 100%; padding: 24px; }
+  .congrats-card { background: rgba(255,255,255,.95); border-radius: 24px; padding: 40px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.15); }
+  .bounce { animation: bounce .8s infinite; display:inline-block; font-size:64px; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+  .app-id-box { background: var(--pink-pale); border-radius: 14px; padding: 20px; margin: 20px 0; }
+  .app-id-box small { color: var(--pink); font-weight: 600; font-size: 12px; display:block; margin-bottom:6px; }
+  .app-id-box h2 { font-size: 22px; letter-spacing: 2px; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="congrats-wrap">
+  <div class="congrats-card">
+    <div class="bounce">🎉</div>
+    <h1 style="font-size:32px; margin:16px 0 8px;">Congratulations! 💕</h1>
+    <div style="font-size:16px; color:var(--muted); margin-bottom:20px;">Application Submitted Successfully</div>
+
+    <p style="font-size:14px; color:var(--muted); line-height:1.7; margin-bottom:16px;">
+      Your volunteer registration has been submitted. You will receive updates via email and SMS.
+    </p>
+
+    <div class="app-id-box">
+      <small>YOUR APPLICATION ID 💗</small>
+      <h2 id="appId">HFZ-VOL-2026-XXXX</h2>
+    </div>
+
+    <div style="text-align:left; margin:20px 0;">
+      <div class="timeline-step">
+        <div class="timeline-icon t-done">✔</div>
+        <div class="timeline-text"><strong>Application Submitted 💕</strong><span>Today – Immediately confirmed</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-done">✔</div>
+        <div class="timeline-text"><strong>Aadhaar Verified ✔</strong><span>UIDAI checksum verification complete</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-progress">⟳</div>
+        <div class="timeline-text"><strong>Police Background Check</strong><span style="color:orange;">In Progress – 3–5 working days</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-pending">–</div>
+        <div class="timeline-text"><strong>NGO Review</strong><span>Womenathon Innovations</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-pending">–</div>
+        <div class="timeline-text"><strong>Guardian Badge Activation 💗</strong><span>Training access + Badge granted</span></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,45,122,.1); border-radius:12px; padding:12px; margin-bottom:24px; font-size:13px; color:var(--pink); font-weight:600;">
+      ✨ Thank You for Joining City Safe! ✨
+    </div>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:1;" onclick="window.location.href='index.html'">🏠 Go to Homepage</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="shareStatus()">💌 Share Status</button>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("load", () => {
+  const stored = sessionStorage.getItem("appId");
+  const id = stored || `HFZ-VOL-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*9000)}`;
+  document.getElementById("appId").textContent = id;
+  if (stored) sessionStorage.removeItem("appId");
+});
+function shareStatus() {
+  const text = "My City Safe Guardian Application ID: " + document.getElementById("appId").textContent + " is under review!";
+  if (navigator.share) { navigator.share({ title: "Application Status", text }); }
+  else { navigator.clipboard.writeText(text); alert("Status copied to clipboard!"); }
+}
+</script>
+</body>
+</html>

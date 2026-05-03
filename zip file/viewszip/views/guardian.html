@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardian Network</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #e9c4cf;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Phone */
+.app {
+  width: min(360px, 100%);
+  max-width: 360px;
+  height: 720px;
+  background: #fff;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #ff7aa2, #ff4f8b);
+  padding: 15px;
+  color: white;
+}
+
+/* Status */
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Title */
+.header h1 {
+  margin: 10px 0 5px;
+}
+
+.header p {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.2);
+  padding: 10px;
+  border-radius: 15px;
+  text-align: center;
+  width: 30%;
+}
+
+.stat b {
+  font-size: 18px;
+}
+
+/* BODY */
+.content {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* Card */
+.card {
+  background: #ffe9f0;
+  border-radius: 20px;
+  padding: 15px;
+  border: 1px solid #f5a8c3;
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.highlight {
+  color: #ff2d7a;
+  font-weight: bold;
+}
+
+/* Tags */
+.tags {
+  margin-top: 10px;
+}
+.tag {
+  display: inline-block;
+  background: #ffd6e6;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 11px;
+  margin: 3px;
+}
+
+.green {
+  background: #d4f7e6;
+}
+
+/* Button */
+.btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff2d7a, #ff6aa2);
+  cursor: pointer;
+}
+
+/* Activity */
+.section-title {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 1px;
+}
+
+.activity {
+  background: #fff;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #8a4fff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.activity small {
+  color: #999;
+  float: right;
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.nav .active {
+  color: #ff2d7a;
+  font-weight: bold;
+}
+
+/* DARK MODE */
+.dark-toggle {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode {
+  background: #0f0f1e;
+}
+
+.dark-mode .app {
+  background: #1a1a2e;
+  color: #f0f0f0;
+}
+
+.dark-mode .header {
+  background: linear-gradient(135deg, #483b5c, #453657);
+  color: #f4d0f0;
+}
+
+.dark-mode .header h1,
+.dark-mode .header p {
+  color: #ff7aa2;
+}
+
+.dark-mode .stats {
+  color: #ddd;
+}
+
+.dark-mode .card,
+.dark-mode .activity {
+  background: #2a2a3e;
+  color: #eee;
+  border: 1px solid #3f3f4d;
+}
+
+.dark-mode .section-title {
+  color: #999;
+}
+
+.dark-mode .nav {
+  color: #999;
+  border-top: 1px solid #3f3f4d;
+}
+
+.dark-mode .nav a {
+  color: #999;
+}
+
+.dark-mode .nav .active {
+  color: #ff7aa2;
+}
+
+.dark-mode .dark-toggle {
+  background: #2a2a3e;
+  color: #ff7aa2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div style="margin-top:10px; font-size:12px;">COMMUNITY 💕</div>
+
+    <h1>Guardian Network 🛡</h1>
+    <p>Verified female volunteers protecting Mumbai’s women together.</p>
+
+    <div class="stats">
+      <div class="stat"><b>1,247</b><br><small>Active Volunteers</small></div>
+      <div class="stat"><b>38</b><br><small>Areas Covered</small></div>
+      <div class="stat"><b>98%</b><br><small>Verified</small></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Volunteer Card -->
+    <div class="card">
+      <h3>Become a Guardian Volunteer</h3>
+      <p class="highlight">Female Only · महिलाएं only</p>
+      <p style="font-size:12px;">Help women safely. Verified volunteers only. Background check required.</p>
+
+      <div class="tags">
+        <span class="tag">✔ Female Only</span>
+        <span class="tag">✔ Age 21+</span>
+        <span class="tag">✔ Mumbai/MH</span>
+        <span class="tag green">✔ Police Verified</span>
+      </div>
+
+      <button class="btn" onclick="register()">💗 Register as Guardian / स्वयंसेवक बनें →</button>
+    </div>
+
+    <!-- Activity -->
+    <div class="section-title">RECENT ACTIVITY 💕</div>
+
+    <div class="activity">
+      <div class="avatar">A</div>
+      <div>
+        <b>Anjali Patil ✔</b><br>
+        <small>Escorted a woman to Andheri Station safely at 10 PM</small>
+      </div>
+      <small style="margin-left:auto;">20 min</small>
+    </div>
+
+    <div class="activity">
+      <div class="avatar" style="background:#ff5c9d;">S</div>
+      <div>
+        <b>Sunita Rao ✔</b><br>
+        <small>Reported suspicious activity near Dadar Market</small>
+      </div>
+      <small style="margin-left:auto;">1 hr</small>
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div><a href="sos1.html">🏠 Home</a></div>
+    <div><a href="livetracking.html">📍 Track</a></div>
+    <div><a href="deepfakereport.html">🛡 Report</a></div>
+    <div class="active"><a href="guardian.html">👥 Community</a></div>
+    <div><a href="profile.html">👤 Profile</a></div>
+  </div>
+
+</div>
+
+<script>
+function register(){
+  window.location.href = 'volunteer.html';
+}
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', isDark ? '1' : '0');
+  updateToggleIcon();
+}
+
+function updateToggleIcon() {
+  const toggle = document.querySelector('.dark-toggle');
+  if (document.body.classList.contains('dark-mode')) {
+    toggle.textContent = '☀️';
+  } else {
+    toggle.textContent = '🌙';
+  }
+}
+
+// Load dark mode preference on page load
+window.addEventListener('load', () => {
+  if (localStorage.getItem('darkMode') === '1') {
+    document.body.classList.add('dark-mode');
+  }
+  updateToggleIcon();
+});
+</script>
+
+</body>
+</html>

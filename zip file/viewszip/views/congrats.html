@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Status</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f6c1d1, #f3d3dd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #fff;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 22px;
+  margin: 10px 0 5px;
+  color: #5b2b5c;
+}
+
+.header p {
+  font-size: 14px;
+  color: #666;
+}
+
+.card {
+  background: #ffe3ee;
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.card small {
+  color: #ff4d94;
+  font-weight: bold;
+}
+
+.card h2 {
+  margin: 10px 0 0;
+  letter-spacing: 2px;
+  color: #5b2b5c;
+}
+
+.timeline {
+  margin-top: 10px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.done {
+  background: #ff4d94;
+  color: white;
+}
+
+.pending {
+  background: #ffd6e7;
+  color: #999;
+}
+
+.progress {
+  background: white;
+  border: 2px solid orange;
+  color: orange;
+}
+
+.text strong {
+  display: block;
+  font-size: 14px;
+}
+
+.text span {
+  font-size: 12px;
+  color: #777;
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #ff4d94, #ff007a);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.share {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.share button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid #ff4d94;
+  background: transparent;
+  color: #ff4d94;
+  cursor: pointer;
+}
+
+.scroll {
+  height: 380px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* scrollbar */
+.scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll::-webkit-scrollbar-thumb {
+  background: #ff4d94;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+  <div class="header">
+    <h1>Badhaai Ho! 🎉<br>Congratulations!</h1>
+    <p>Your Guardian Volunteer application has been submitted.<br>
+    <b>You'll be notified after police & NGO verification.</b></p>
+  </div>
+
+  <div class="card">
+    <small>YOUR APPLICATION ID 💗</small>
+    <h2>HFZ-VOL-2024-7391</h2>
+  </div>
+
+  <div class="scroll" id="timeline">
+
+    <div class="timeline">
+
+      <div class="step">
+        <div class="icon done">✔</div>
+        <div class="text">
+          <strong>Application Submitted 💕</strong>
+          <span>Today - Immediately confirmed</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon done">✔</div>
+        <div class="text">
+          <strong>Aadhaar Verified ✔</strong>
+          <span>UIDAI verification complete</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon progress">⟳</div>
+        <div class="text">
+          <strong>Police Background Check</strong>
+          <span style="color: orange;">In Progress - 3–5 working days</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon pending">–</div>
+        <div class="text">
+          <strong>NGO Review</strong>
+          <span>Womenathon Innovations</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon pending">–</div>
+        <div class="text">
+          <strong>Guardian Badge Activation 💗</strong>
+          <span>Training access + Badge granted</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <button class="btn" onclick="goHome()">🏠 Back to Home / घर वापस जाएं</button>
+
+  <div class="share">
+    <button onclick="shareStatus()">💌 Share Application Status</button>
+  </div>
+</div>
+
+<script>
+function goHome() {
+  alert("Redirecting to Home...");
+  // simulate navigation
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareStatus() {
+  const text = "My Application ID: HFZ-VOL-2024-7391 is under review!";
+  
+  if (navigator.share) {
+    navigator.share({
+      title: "Application Status",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Status copied to clipboard!");
+  }
+}
+</script>
+
+</body>
+</html>

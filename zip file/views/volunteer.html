@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volunteer Registration – City Safe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="guardian.html">← Back to Community</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+<div class="page">
+<div class="container-sm">
+
+  <div class="step-header">
+    <a href="guardian.html" class="step-back">←</a>
+    <div class="step-title">Volunteer Registration</div>
+    <div class="step-badge">Step 1 of 6</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Eligibility Check</span><span>20%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:6px;">Eligibility Check 💕</h2>
+    <p class="text-muted" style="font-size:14px; margin-bottom:20px;">Confirm you meet all criteria to become a City Safe Guardian Volunteer.</p>
+
+    <div class="notice mb-24">
+      👩‍💼 <strong>Female Volunteers Only.</strong><br>
+      Only women/girls may register. This is a female-exclusive safe space.
+    </div>
+
+    <div class="notice notice-info mb-24">
+      ✅ Female Only &nbsp;·&nbsp; ✅ Age 18–45 &nbsp;·&nbsp; ✅ Lives in India &nbsp;·&nbsp; ✅ Police Verified
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Age (18–45) *</label>
+      <select id="age" class="form-input form-select">
+        <option value="" disabled selected>Select your age</option>
+        <option>18</option><option>19</option><option>20</option><option>21</option><option>22</option>
+        <option>23</option><option>24</option><option>25</option><option>26</option><option>27</option>
+        <option>28</option><option>29</option><option>30</option><option>31</option><option>32</option>
+        <option>33</option><option>34</option><option>35</option><option>36</option><option>37</option>
+        <option>38</option><option>39</option><option>40</option><option>41</option><option>42</option>
+        <option>43</option><option>44</option><option>45</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">City *</label>
+      <select id="city" class="form-input form-select">
+        <option value="" disabled selected>Select your city</option>
+        <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option><option>Hyderabad</option>
+        <option>Ahmedabad</option><option>Chennai</option><option>Kolkata</option><option>Pune</option>
+        <option>Surat</option><option>Jaipur</option><option>Lucknow</option><option>Nagpur</option>
+        <option>Indore</option><option>Thane</option><option>Bhopal</option><option>Nashik</option>
+        <option>Patna</option><option>Vadodara</option><option>Ludhiana</option><option>Agra</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" onclick="validateForm()">💞 Confirm Eligibility →</button>
+  </div>
+
+</div>
+</div>
+<script>
+function validateForm() {
+  const age = parseInt(document.getElementById("age").value);
+  const city = document.getElementById("city").value;
+  if (!age || age < 18 || age > 45) { alert("❌ Please select a valid age between 18 and 45."); return; }
+  if (!city) { alert("❌ Please select your city."); return; }
+  sessionStorage.setItem("volAge", age);
+  sessionStorage.setItem("volCity", city);
+  window.location.href = 'aadhar.html';
+}
+function toggleDark() { const d = document.body.classList.toggle('dark'); localStorage.setItem('dark', d?'1':'0'); document.querySelector('.dark-btn').textContent = d?'☀️':'🌙'; }
+window.addEventListener('load', () => { if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; } });
+</script>
+</body>
+</html>

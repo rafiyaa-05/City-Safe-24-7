@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Deepfake</title>
+<style>
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f6c7d7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Phone container */
+.app {
+  width: min(360px, 100%);
+  max-width: 360px;
+  height: 720px;
+  background: #f9dbe5;
+  border-radius: 40px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Badge */
+.badge {
+  margin-top: 10px;
+  display: inline-block;
+  background: #ffd6e6;
+  color: #ff2d7a;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Title */
+h1 {
+  font-size: 24px;
+  margin: 10px 0 5px;
+  color: #4b2b3c;
+}
+
+.sub {
+  font-size: 13px;
+  color: #8c6a78;
+}
+
+/* Upload box */
+.upload-box {
+  margin-top: 15px;
+  border: 2px dashed #f5a8c3;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  background: #fceaf1;
+}
+
+.upload-box h3 {
+  margin: 10px 0;
+}
+
+.preview-img,
+.preview-video {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 18px;
+  margin-top: 10px;
+}
+
+#fileDetails {
+  word-break: break-word;
+}
+
+.upload-box p {
+  font-size: 12px;
+  color: #888;
+}
+
+.btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ff2d7a, #ff6aa2);
+  color: white;
+  cursor: pointer;
+}
+
+/* AI Card */
+.card {
+  margin-top: 15px;
+  background: white;
+  border-radius: 20px;
+  padding: 15px;
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.live {
+  float: right;
+  font-size: 11px;
+  background: #ffd6e6;
+  padding: 4px 10px;
+  border-radius: 15px;
+  color: #ff2d7a;
+}
+
+/* Alert box */
+.alert {
+  margin-top: 10px;
+  border: 2px solid #f5a8c3;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.alert strong {
+  color: #ff2d7a;
+}
+
+.progress {
+  margin-top: 10px;
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress div {
+  width: 87%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff2d7a, #ff6aa2);
+}
+
+/* Tags */
+.tags {
+  margin-top: 10px;
+}
+
+.tag {
+  display: inline-block;
+  background: #f3f3f3;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 11px;
+  margin: 3px;
+}
+
+/* Bottom info */
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.info div {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 15px;
+  font-size: 11px;
+}
+
+/* Nav */
+.nav {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+  font-size: 12px;
+  color: #888;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.nav .active {
+  color: #ff2d7a;
+  font-weight: bold;
+}
+
+/* DARK MODE */
+.dark-toggle {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode {
+  background: #0f0f1e;
+}
+
+.dark-mode .app {
+  background: #1a1a2e;
+  color: #f0f0f0;
+}
+
+.dark-mode .status {
+  color: #ccc;
+}
+
+.dark-mode h1,
+.dark-mode .sub {
+  color: #ff7aa2;
+}
+
+.dark-mode .upload-box {
+  background: #2a2a3e;
+  border: 2px dashed #4a4a5e;
+  color: #eee;
+}
+
+.dark-mode .card,
+.dark-mode .info div {
+  background: #2a2a3e;
+  color: #eee;
+}
+
+.dark-mode .alert {
+  border: 2px solid #4a4a5e;
+  background: #2a2a3e;
+  color: #eee;
+}
+
+.dark-mode .nav {
+  color: #999;
+}
+
+.dark-mode .nav a {
+  color: #999;
+}
+
+.dark-mode .nav .active {
+  color: #ff7aa2;
+}
+
+.dark-mode .dark-toggle {
+  background: #2a2a3e;
+  color: #ff7aa2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <!-- Status -->
+  <div class="status">
+    <span>Hifazat Report</span>
+    <span></span>
+  </div>
+
+  <!-- Badge -->
+  <div class="badge">🛡 CYBER SAFETY SHIELD</div>
+
+  <!-- Title -->
+  <h1>Report Deepfake & Harassment 🌸</h1>
+  <div class="sub">AI-powered evidence · FIR generation</div>
+
+  <!-- Upload -->
+  <div class="upload-box">
+    <input type="file" id="evidenceInput" accept=".jpg,.jpeg,.png,.mp4" style="display:none" />
+    <div style="font-size:40px;">📁🌸</div>
+    <h3>Upload Photo / Video</h3>
+    <p>Tap to select evidence from gallery<br>Supports JPG, MP4, PNG</p>
+    <button class="btn" id="uploadBtn" onclick="upload()">Choose File / फाइल चुनें</button>
+    <div id="fileDetails" style="margin-top:15px;text-align:left;color:#6e4d5d;font-size:13px;"></div>
+    <div id="previewContainer" style="margin-top:15px;"></div>
+  </div>
+
+  <!-- AI Result -->
+  <div class="card">
+    <h3>AI Analysis Result ✨ <span class="live">LIVE AI</span></h3>
+
+    <div class="alert">
+      ⚠ <strong>This image appears morphed</strong>
+      <p style="font-size:12px;">Confidence: 87% · Facial manipulation detected</p>
+
+      <div class="progress">
+        <div></div>
+      </div>
+    </div>
+
+    <div class="tags">
+      <span class="tag">• GAN artifacts</span>
+      <span class="tag">• Pixel mismatch</span>
+      <span class="tag">• Deepfake sig.</span>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="info">
+    <div>📍 Andheri West</div>
+    <div>🕒 Today 6:42 PM</div>
+    <div>🔒 Sealed</div>
+    <div>📱 Device ID</div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <div><a href="sos1.html">🏠 Home</a></div>
+    <div><a href="livetracking.html">📍 Track</a></div>
+    <div class="active"><a href="deepfakereport.html">🛡 Report</a></div>
+    <div><a href="guardian.html">👥 Community</a></div>
+    <div><a href="profile.html">👤 Profile</a></div>
+  </div>
+
+</div>
+
+<script>
+const evidenceInput = document.getElementById('evidenceInput');
+const fileDetails = document.getElementById('fileDetails');
+const previewContainer = document.getElementById('previewContainer');
+const uploadBtn = document.getElementById('uploadBtn');
+
+function upload() {
+  evidenceInput.click();
+}
+
+evidenceInput.addEventListener('change', () => {
+  const file = evidenceInput.files[0];
+  if (!file) {
+    return;
+  }
+
+  const validTypes = ['image/jpeg', 'image/png', 'video/mp4'];
+  if (!validTypes.includes(file.type)) {
+    fileDetails.textContent = 'Unsupported file type. Please choose JPG, PNG, or MP4.';
+    previewContainer.innerHTML = '';
+    return;
+  }
+
+  const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+  fileDetails.innerHTML = `<strong>Selected:</strong> ${file.name}<br><strong>Size:</strong> ${sizeMb} MB`;
+  uploadBtn.textContent = 'Change File / फाइल बदलें';
+
+  previewContainer.innerHTML = '';
+  const url = URL.createObjectURL(file);
+
+  if (file.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Selected evidence image';
+    img.className = 'preview-img';
+    previewContainer.appendChild(img);
+  } else if (file.type === 'video/mp4') {
+    const video = document.createElement('video');
+    video.src = url;
+    video.controls = true;
+    video.className = 'preview-video';
+    previewContainer.appendChild(video);
+  }
+
+  previewContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', isDark ? '1' : '0');
+  updateToggleIcon();
+}
+
+function updateToggleIcon() {
+  const toggle = document.querySelector('.dark-toggle');
+  if (document.body.classList.contains('dark-mode')) {
+    toggle.textContent = '☀️';
+  } else {
+    toggle.textContent = '🌙';
+  }
+}
+
+// Load dark mode preference on page load
+window.addEventListener('load', () => {
+  if (localStorage.getItem('darkMode') === '1') {
+    document.body.classList.add('dark-mode');
+  }
+  updateToggleIcon();
+});
+</script>
+
+</body>
+</html>

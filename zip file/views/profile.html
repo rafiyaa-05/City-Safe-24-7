@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .profile-header { background: linear-gradient(135deg, #ff7aa2, #ff4f8b); color: #fff; border-radius: 20px; padding: 32px; display: flex; align-items: center; gap: 20px; margin-bottom: 28px; }
+  .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,.3); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; }
+  .privacy-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0e0e8; }
+  .privacy-row:last-child { border-bottom: none; }
+  body.dark .privacy-row { border-color: #3a2040; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html" class="active">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container-md">
+
+  <div class="profile-header">
+    <div class="profile-avatar" id="avatarEl">P</div>
+    <div>
+      <h2 id="profileName" style="font-size:24px; margin-bottom:4px;">Loading...</h2>
+      <div style="opacity:.9; font-size:14px;" id="profileEmail">—</div>
+      <div style="opacity:.8; font-size:13px; margin-top:4px;">AI Shield Active · Protected 💕</div>
+    </div>
+    <button class="btn btn-white btn-sm" style="margin-left:auto;" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <div class="grid-2" style="gap:24px; align-items:start;">
+
+    <!-- Contacts -->
+    <div>
+      <div class="card mb-24">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+          <div class="section-title" style="margin:0;">Trusted Contacts 💗</div>
+          <button class="btn btn-primary btn-sm" onclick="addContact()">➕ Add</button>
+        </div>
+        <div id="contactsList">
+          <div style="color:var(--muted); font-size:14px; text-align:center; padding:20px;">Loading contacts...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Volunteer Status 💕</div>
+        <div id="volunteerStatus">
+          <div style="color:var(--muted); font-size:14px;">No volunteer application found.</div>
+        </div>
+        <a href="volunteer.html" class="btn btn-outline btn-full mt-16" style="font-size:13px;">Apply as Guardian Volunteer →</a>
+      </div>
+    </div>
+
+    <!-- Privacy -->
+    <div>
+      <div class="card">
+        <div class="section-title">Privacy & Security 🔒</div>
+        <div class="privacy-row">
+          <div>🌙 Dark Mode</div>
+          <label class="switch"><input type="checkbox" id="darkToggle" onchange="toggleDarkSwitch()"><span class="slider"></span></label>
+        </div>
+        <div class="privacy-row">
+          <div>🔗 Blockchain Secure Mode</div>
+          <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="privacy-row">
+          <div>⌚ Smartwatch Connected</div>
+          <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="privacy-row">
+          <div>🕵️ Stealth Mode</div>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+async function loadProfile() {
+  try {
+    const res = await fetch('/api/profile');
+    const data = await res.json();
+    if (!data.success) { window.location.href = 'login.html'; return; }
+
+    const { user, contacts, volunteerApp } = data;
+    document.getElementById('profileName').textContent = user.name + ' 💕';
+    document.getElementById('profileEmail').textContent = user.email;
+    document.getElementById('avatarEl').textContent = user.name[0].toUpperCase();
+
+    // Contacts
+    const cl = document.getElementById('contactsList');
+    if (contacts.length === 0) {
+      cl.innerHTML = '<div style="color:var(--muted); font-size:14px; text-align:center; padding:20px;">No trusted contacts yet. Add one!</div>';
+    } else {
+      cl.innerHTML = contacts.map(c => `
+        <div class="contact-row">
+          <div class="contact-avatar">${c.name[0].toUpperCase()}</div>
+          <div class="contact-info"><b>${c.name}</b><small>${c.phone} · ${c.relationship || 'Contact'}</small></div>
+          <div class="contact-status">● Active</div>
+          <button onclick="deleteContact(${c.id})" style="background:none;border:none;cursor:pointer;color:#ff4444;font-size:16px;">🗑️</button>
+        </div>`).join('');
+    }
+
+    // Volunteer
+    const vs = document.getElementById('volunteerStatus');
+    if (volunteerApp) {
+      vs.innerHTML = `
+        <div class="contact-row">
+          <div class="contact-avatar">👑</div>
+          <div class="contact-info"><b>Guardian Volunteer</b><small style="color:${volunteerApp.status==='pending'?'#ff9800':'#28c76f'}">${volunteerApp.status} · ${volunteerApp.app_id}</small></div>
+        </div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function addContact() {
+  const name = prompt("Contact Name:");
+  if (!name) return;
+  const phone = prompt("Phone Number:");
+  if (!phone) return;
+  const relationship = prompt("Relationship (e.g. Mother, Sister):");
+  try {
+    const res = await fetch("/api/contacts", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ name, phone, relationship, isPrimary: false }) });
+    const data = await res.json();
+    if (data.success) { alert("✅ Contact added!"); loadProfile(); }
+    else { alert("❌ " + data.message); }
+  } catch { alert("❌ Error adding contact."); }
+}
+
+async function deleteContact(id) {
+  if (!confirm("Remove this contact?")) return;
+  await fetch(`/api/contacts/${id}`, { method: "DELETE" });
+  loadProfile();
+}
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  window.location.href = 'login.html';
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+  document.getElementById('darkToggle').checked = d;
+}
+
+function toggleDarkSwitch() {
+  const d = document.getElementById('darkToggle').checked;
+  document.body.classList.toggle('dark', d);
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark') === '1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent = '☀️'; document.getElementById('darkToggle').checked = true; }
+  loadProfile();
+});
+</script>
+</body>
+</html>

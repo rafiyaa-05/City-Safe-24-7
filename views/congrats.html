@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Status – City Safe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+<div class="page">
+<div class="container-sm">
+  <div class="card" style="text-align:center;">
+    <div style="font-size:48px; margin-bottom:12px;">🎉</div>
+    <h1 style="font-size:26px; margin-bottom:6px;">Badhaai Ho! Congratulations!</h1>
+    <p class="text-muted" style="font-size:14px; margin-bottom:20px;">Your Guardian Volunteer application has been submitted.<br><strong>You'll be notified after police & NGO verification.</strong></p>
+
+    <div style="background:var(--pink-pale); border-radius:14px; padding:20px; margin-bottom:24px;">
+      <div style="color:var(--pink); font-weight:600; font-size:12px; margin-bottom:6px;">YOUR APPLICATION ID 💗</div>
+      <div style="font-size:22px; font-weight:700; letter-spacing:2px;" id="appId">HFZ-VOL-2024-7391</div>
+    </div>
+
+    <div style="text-align:left;">
+      <div class="timeline-step">
+        <div class="timeline-icon t-done">✔</div>
+        <div class="timeline-text"><strong>Application Submitted 💕</strong><span>Today – Immediately confirmed</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-done">✔</div>
+        <div class="timeline-text"><strong>Aadhaar Verified ✔</strong><span>UIDAI verification complete</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-progress">⟳</div>
+        <div class="timeline-text"><strong>Police Background Check</strong><span style="color:orange;">In Progress – 3–5 working days</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-pending">–</div>
+        <div class="timeline-text"><strong>NGO Review</strong><span>Womenathon Innovations</span></div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon t-pending">–</div>
+        <div class="timeline-text"><strong>Guardian Badge Activation 💗</strong><span>Training access + Badge granted</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:1;" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="shareStatus()">💌 Share Status</button>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function shareStatus() {
+  const text = "My Application ID: " + document.getElementById("appId").textContent + " is under review!";
+  if (navigator.share) { navigator.share({ title: "Application Status", text }); }
+  else { navigator.clipboard.writeText(text); alert("Status copied to clipboard!"); }
+}
+function toggleDark() { const d = document.body.classList.toggle('dark'); localStorage.setItem('dark', d?'1':'0'); document.querySelector('.dark-btn').textContent = d?'☀️':'🌙'; }
+window.addEventListener('load', () => { if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; } });
+</script>
+</body>
+</html>

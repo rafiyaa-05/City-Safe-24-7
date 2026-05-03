@@ -1,0 +1,5 @@
+node_modules/
+hifazat.db
+uploads/
+.env
+*.db

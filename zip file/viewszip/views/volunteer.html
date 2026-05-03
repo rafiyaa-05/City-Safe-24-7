@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eligibility Check</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4c9d6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE FRAME */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #ffe6ef;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.back {
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-right: 10px;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.step {
+  margin-left: auto;
+  color: #ff2c8b;
+  font-size: 12px;
+}
+
+.progress {
+  height: 4px;
+  background: #ffd1e3;
+  border-radius: 10px;
+  margin: 10px 0 20px;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 20%;
+  height: 100%;
+  background: #ff2c8b;
+  position: absolute;
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  font-size: 20px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* ALERT BOX */
+.notice {
+  background: #ffe0ec;
+  border: 1px solid #ffb3d1;
+  padding: 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+/* GENDER */
+.gender-title {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.gender-options {
+  display: flex;
+  gap: 10px;
+}
+
+.gender {
+  flex: 1;
+  padding: 12px;
+  border-radius: 15px;
+  background: #f5eaf0;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.gender.active {
+  border-color: #ff2c8b;
+  background: #ffe6ef;
+  color: #ff2c8b;
+}
+
+/* CARD */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 15px;
+  margin-top: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.small {
+  font-size: 12px;
+  color: #888;
+}
+
+.select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-top: 8px;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  margin-top: 20px;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="back" onclick="goBack()">←</div>
+    <div class="title">Volunteer Registration</div>
+    <div class="step">Step 1 of 6</div>
+  </div>
+
+  <div class="progress"></div>
+
+  <h2>Eligibility Check 💕</h2>
+  <div class="sub">
+    Confirm you meet all criteria to become a Hifazat Guardian Volunteer.
+  </div>
+
+  <div class="notice">
+    👩‍💼 <b>Female Volunteers Only.</b><br>
+    Only women/girls may register. This is a female-exclusive safe space.
+  </div>
+
+  <div class="card">
+
+    <div class="row">
+      <div class="label">Gender: Female Only ✔</div>
+      <div class="small">Only women/girls may become Guardian Volunteers</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Age 18 to 45</div>
+      <div class="small">Select your age</div>
+      <select class="select" id="age">
+        <option value="" disabled selected>Select age</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+        <option>31</option>
+        <option>32</option>
+        <option>33</option>
+        <option>34</option>
+        <option>35</option>
+        <option>36</option>
+        <option>37</option>
+        <option>38</option>
+        <option>39</option>
+        <option>40</option>
+        <option>41</option>
+        <option>42</option>
+        <option>43</option>
+        <option>44</option>
+        <option>45</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="label">Lives in India</div>
+      <div class="small">Select your city</div>
+      <select class="select" id="city">
+        <option value="" disabled selected>Select city</option>
+        <option>Mumbai</option>
+        <option>Delhi</option>
+        <option>Bengaluru</option>
+        <option>Hyderabad</option>
+        <option>Ahmedabad</option>
+        <option>Chennai</option>
+        <option>Kolkata</option>
+        <option>Pune</option>
+        <option>Surat</option>
+        <option>Jaipur</option>
+        <option>Lucknow</option>
+        <option>Kanpur</option>
+        <option>Nagpur</option>
+        <option>Indore</option>
+        <option>Thane</option>
+        <option>Bhopal</option>
+        <option>Visakhapatnam</option>
+        <option>Pimpri-Chinchwad</option>
+        <option>Patna</option>
+        <option>Vadodara</option>
+        <option>Ghaziabad</option>
+        <option>Ludhiana</option>
+        <option>Agra</option>
+        <option>Nashik</option>
+        <option>Faridabad</option>
+        <option>Meerut</option>
+        <option>Rajkot</option>
+        <option>Kalyan-Dombivli</option>
+        <option>Vasai-Virar</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button class="btn" onclick="validateForm()">💞 Confirm Eligibility</button>
+
+</div>
+
+<script>
+function goBack() {
+  window.location.href = 'guardian.html';
+}
+
+function validateForm() {
+  let age = parseInt(document.getElementById("age").value, 10);
+  let city = document.getElementById("city").value;
+
+  if (!age || age < 18 || age > 45) {
+    alert("❌ Please select a valid age between 18 and 45.");
+    return;
+  }
+
+  if (!city) {
+    alert("❌ Please select your city.");
+    return;
+  }
+
+  window.location.href = 'aadhar.html';
+}
+</script>
+
+</body>
+</html>

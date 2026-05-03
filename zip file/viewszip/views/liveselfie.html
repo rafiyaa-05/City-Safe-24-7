@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Selfie</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f3cbd6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #ffe6ef;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.back {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.step {
+  margin-left: auto;
+  color: #ff2c8b;
+  font-size: 12px;
+}
+
+/* PROGRESS */
+.progress {
+  height: 4px;
+  background: #ffd1e3;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 70%;
+  height: 100%;
+  background: #ff2c8b;
+  position: absolute;
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  font-size: 20px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+/* CAMERA BOX */
+.camera-box {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: #120012;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* VIDEO */
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* FACE OVAL */
+.oval {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 220px;
+  transform: translate(-50%, -50%);
+  border: 3px solid #ff2c8b;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #ff2c8b;
+}
+
+/* SCANNER LINE */
+.scan {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #ff2c8b;
+  top: 0;
+  animation: scan 2s infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* CORNERS */
+.corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ff2c8b;
+}
+
+.tl { top: 20%; left: 20%; border-right: none; border-bottom: none; }
+.tr { top: 20%; right: 20%; border-left: none; border-bottom: none; }
+.bl { bottom: 20%; left: 20%; border-right: none; border-top: none; }
+.br { bottom: 20%; right: 20%; border-left: none; border-top: none; }
+
+/* LABEL */
+.label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+/* SCAN TEXT */
+.scan-text {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin: 10px 0;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="back">←</div>
+    <div class="title">Live Selfie</div>
+    <div class="step">Step 4 of 6</div>
+  </div>
+
+  <div class="progress"></div>
+
+  <h2>Take Live Selfie 🤳</h2>
+  <div class="sub">Align face in the pink oval. Good lighting, no masks.</div>
+
+  <div class="camera-box">
+
+    <video id="video" autoplay></video>
+
+    <div class="oval"></div>
+    <div class="scan"></div>
+
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="label">Align face in pink oval 💕</div>
+  </div>
+
+  <div class="scan-text">● Scanning face • Please hold still</div>
+
+  <button class="btn" onclick="capture()">📸 Capture Live Selfie</button>
+
+</div>
+
+<script>
+// Start camera
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+  document.getElementById("video").srcObject = stream;
+})
+.catch(err => {
+  alert("Camera access denied");
+});
+
+// Capture image
+function capture() {
+  alert("📸 Selfie Captured!");
+}
+</script>
+
+</body>
+</html>

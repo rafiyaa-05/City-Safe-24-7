@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS Activating – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: #0a0a0a; color: #fff; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .sos-page { max-width: 500px; width: 100%; padding: 40px 24px; text-align: center; }
+  .sos-warning { color: #ff4d94; font-size: 14px; font-weight: 700; letter-spacing: 3px; margin-bottom: 24px; }
+  .countdown-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto 32px; }
+  .countdown-circle { position: absolute; inset: 0; border: 12px solid #ff4d94; border-radius: 50%; box-shadow: 0 0 40px #ff4d94, 0 0 80px rgba(255,77,148,.5); animation: glow 2s infinite alternate; }
+  @keyframes glow { from{box-shadow:0 0 40px #ff4d94,0 0 80px rgba(255,77,148,.5)} to{box-shadow:0 0 60px #ff4d94,0 0 120px rgba(255,77,148,.7)} }
+  .countdown-num { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size: 100px; font-weight: 800; color: #ff4d94; }
+  .notif { background: rgba(255,255,255,.95); color: #000; border-radius: 14px; padding: 14px 18px; display:flex; align-items:center; gap:12px; margin-bottom:24px; text-align:left; }
+  .contact-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .contact-btn { background: rgba(255,77,148,.15); border: 2px solid #ff4d94; color: #fff; padding: 10px 24px; border-radius: 50px; font-size: 14px; cursor: pointer; }
+  .police-btn { background: #0066ff; border: none; color: #fff; padding: 10px 28px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 24px; }
+  .cancel-btn { background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 16px 60px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; }
+  .cancel-btn:hover { background: rgba(255,77,148,.2); border-color: #ff4d94; }
+</style>
+</head>
+<body>
+<div class="sos-page">
+  <div class="notif">
+    <span style="font-size:20px;">❤️</span>
+    <div><strong>Area Safe</strong><br><span style="font-size:13px; color:#666;">Andheri West is currently safe. AI monitoring active.</span></div>
+    <div style="margin-left:auto; font-size:12px; color:#999;">Now</div>
+  </div>
+
+  <div class="sos-warning">▲ SOS ACTIVATING ▲</div>
+
+  <div class="countdown-wrap">
+    <div class="countdown-circle"></div>
+    <div class="countdown-num" id="countdown">4</div>
+  </div>
+
+  <div class="contact-btns">
+    <button class="contact-btn">❤️ Ammi (Mom)</button>
+    <button class="contact-btn">❤️ Anjali (Sister)</button>
+  </div>
+
+  <div><button class="police-btn">🚨 Police 100</button></div>
+
+  <button class="cancel-btn" onclick="cancelSOS()">Cancel / रद्द करें</button>
+</div>
+
+<script>
+let count = 4;
+const el = document.getElementById('countdown');
+const timer = setInterval(() => {
+  count--;
+  el.textContent = count;
+  if (count <= 0) { clearInterval(timer); el.style.color = '#ff0000'; el.textContent = 'SOS!'; el.style.fontSize = '60px'; }
+}, 1000);
+
+function cancelSOS() {
+  if (confirm("Are you sure you want to cancel the SOS?")) {
+    clearInterval(timer);
+    const sosId = sessionStorage.getItem("sosId");
+    if (sosId) { fetch(`/api/sos/cancel/${sosId}`, { method: "POST" }); sessionStorage.removeItem("sosId"); }
+    alert("SOS cancelled successfully.");
+    window.location.href = "index.html";
+  }
+}
+</script>
+</body>
+</html>

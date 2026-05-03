@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help is on the Way – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: #0f0a12; color: #fff; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .help-page { max-width: 560px; width: 100%; padding: 40px 24px; text-align: center; }
+  .hearts { font-size: 64px; animation: float 3s ease-in-out infinite; margin-bottom: 20px; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  .help-title { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+  .help-title span { color: #ff4d94; }
+  .help-sub { color: #ff99cc; font-size: 15px; margin-bottom: 32px; }
+  .status-card { background: rgba(255,255,255,.08); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; border-left: 5px solid; text-align: left; }
+  .status-card.green { border-left-color: #22ff88; }
+  .status-card.pink { border-left-color: #ff66aa; }
+  .status-card.blue { border-left-color: #4488ff; }
+  .status-card h4 { font-size: 15px; margin-bottom: 4px; }
+  .status-card p { font-size: 13px; color: #aaa; }
+  .action-btns { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 28px 0; }
+  .action-btn { background: rgba(255,255,255,.1); border: none; border-radius: 14px; padding: 18px 10px; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s; }
+  .action-btn:hover { background: rgba(255,77,148,.2); }
+  .safe-btn { width: 100%; background: linear-gradient(90deg, #00ff88, #00cc66); color: #000; font-weight: 700; font-size: 18px; padding: 18px; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 25px rgba(0,255,136,.4); transition: all .3s; }
+  .safe-btn:hover { transform: scale(1.02); }
+</style>
+</head>
+<body>
+<div class="help-page">
+  <div class="hearts">❤️❤️</div>
+  <div class="help-title">Help is on<br><span>the way!</span> 🌸</div>
+  <div class="help-sub">Your emergency alert has been sent.<br>You are loved and not alone. ❤️</div>
+
+  <div class="status-card green">
+    <h4>✅ Ammi & Anjali notified</h4>
+    <p>Location shared · Calling in 30 sec</p>
+  </div>
+  <div class="status-card pink">
+    <h4>📢 AI message to Police</h4>
+    <p>Maharashtra Police 100 · FIR draft ready</p>
+  </div>
+  <div class="status-card blue">
+    <h4>📍 Location tracked</h4>
+    <p>Andheri West · Blockchain secured 🔒</p>
+  </div>
+
+  <div class="action-btns">
+    <button class="action-btn">🔊<br>Loud Alarm</button>
+    <button class="action-btn">🛎️<br>Silent Alert</button>
+    <button class="action-btn">🎤<br>Voice Note</button>
+  </div>
+
+  <button class="safe-btn" onclick="imSafe()">I'm Safe Now / मैं सुरक्षित हूँ</button>
+</div>
+
+<script>
+function imSafe() {
+  if (confirm("Are you really safe now?")) {
+    const sosId = sessionStorage.getItem("sosId");
+    if (sosId) { fetch(`/api/sos/safe/${sosId}`, { method: "POST" }); sessionStorage.removeItem("sosId"); }
+    const btn = document.querySelector('.safe-btn');
+    btn.textContent = "✅ Status Updated";
+    btn.style.background = "#22ff88";
+    setTimeout(() => { window.location.href = "index.html"; }, 1500);
+  }
+}
+</script>
+</body>
+</html>

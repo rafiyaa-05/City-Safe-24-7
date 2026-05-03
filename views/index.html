@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+
+/* ── SOS BUTTON (rings centered ON the button) ── */
+.sos-section {
+  text-align: center;
+  padding: 50px 0 36px;
+}
+
+.sos-wrap {
+  position: relative;
+  display: inline-block; /* shrink-wrap to button size */
+}
+
+/* Rings expand outward from the button centre */
+.sos-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  border: 2px solid rgba(255, 0, 120, 0.35);
+  border-radius: 50%;
+  width: 160px; height: 160px;
+  animation: sosRing 2s ease-out infinite;
+  pointer-events: none;
+}
+.sos-ring:nth-child(2) { animation-delay: 0.7s; }
+.sos-ring:nth-child(3) { animation-delay: 1.4s; }
+
+@keyframes sosRing {
+  0%   { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+  100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0; }
+}
+
+/* Button itself */
+.sos-btn {
+  position: relative; z-index: 2;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle at 40% 35%, #ff6ab0, #ff0077);
+  border-radius: 50%; border: none;
+  color: #fff; font-size: 28px; font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 0 6px rgba(255,0,120,.15), 0 8px 32px rgba(255,0,120,.4);
+  transition: transform .15s, box-shadow .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.sos-btn:hover  { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(255,0,120,.2), 0 12px 40px rgba(255,0,120,.5); }
+.sos-btn:active { transform: scale(0.96); }
+
+/* ── RECORDING STATUS BAR ── */
+.rec-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: #fff0f5;
+  border: 1.5px solid #ffb3d1;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.rec-bar.active { display: flex; }
+.rec-dot {
+  width: 12px; height: 12px;
+  background: #ff2d7a; border-radius: 50%;
+  animation: recBlink 1s infinite;
+  flex-shrink: 0;
+}
+@keyframes recBlink { 0%,100%{opacity:1} 50%{opacity:.2} }
+.rec-timer { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--pink); font-weight: 700; }
+body.dark .rec-bar { background: #2a1a30; border-color: #4a2a40; }
+
+/* ── ALERT CARD LOADING ── */
+.alert-loading {
+  text-align: center; padding: 24px;
+  color: var(--muted); font-size: 14px;
+}
+.alert-spinner {
+  width: 28px; height: 28px;
+  border: 3px solid #f0d8e4;
+  border-top-color: var(--pink);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.alert-source {
+  font-size: 11px; color: #aaa;
+  margin-top: 6px;
+}
+
+.ai-alert-banner {
+  background: #fff3ec;
+  border-left: 5px solid #ff8c42;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background .2s;
+  margin-bottom: 24px;
+}
+.ai-alert-banner:hover { background: #ffe8d8; }
+
+.insight-box {
+  background: linear-gradient(135deg, #fff8fb, #ffe6ef);
+  border: 1px solid #f5c0d4;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html" class="active">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container">
+
+  <!-- Header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <div>
+      <h1 style="font-size:26px; font-weight:700;">City Safe <span class="text-pink">AI 💕</span></h1>
+      <div class="text-muted" style="font-size:14px;" id="locationLabel">AI Shield Active</div>
+    </div>
+    <div id="userGreet" style="font-size:14px; color:var(--muted);"></div>
+  </div>
+
+  <!-- Top alert banner (dynamic) -->
+  <div class="ai-alert-banner" id="topAlertBanner" onclick="window.location.href='alert.html'">
+    <strong>⏳ Fetching real-time alerts for your area...</strong><br>
+    <span style="font-size:13px; color:#c05000;">Allow location for accurate alerts →</span>
+  </div>
+
+  <div class="grid-2" style="gap:32px; align-items:start;">
+
+    <!-- LEFT -->
+    <div>
+
+      <!-- SOS -->
+      <div class="card mb-24">
+        <div class="sos-section">
+          <div class="sos-wrap">
+            <div class="sos-ring"></div>
+            <div class="sos-ring"></div>
+            <div class="sos-ring"></div>
+            <button class="sos-btn" onclick="triggerSOS()">SOS</button>
+          </div>
+          <div style="margin-top:20px; font-size:13px; color:var(--muted);">Tap to activate emergency alert</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card mb-24">
+        <div class="section-title">Quick Actions</div>
+        <div class="grid-4" style="gap:12px;">
+          <div class="quick-action" onclick="triggerFakeCall()">
+            <div class="icon">📞</div><span>Fake Call</span>
+          </div>
+          <div class="quick-action" id="voiceBtn" onclick="toggleRecording()">
+            <div class="icon">🎤</div><span>Voice Rec</span>
+          </div>
+          <div class="quick-action" onclick="openHelplines()">
+            <div class="icon">🆘</div><span>Helplines</span>
+          </div>
+          <div class="quick-action" onclick="window.location.href='guardian.html'">
+            <div class="icon">👥</div><span>Community</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice Recording Status -->
+      <div class="rec-bar" id="recBar">
+        <div class="rec-dot"></div>
+        <div>
+          <div style="font-weight:600;">Recording in progress...</div>
+          <div style="font-size:12px; color:var(--muted);">Tap Voice Rec again to stop</div>
+        </div>
+        <div class="rec-timer" id="recTimer">0:00</div>
+      </div>
+
+      <!-- Playback area -->
+      <div id="recordingArea"></div>
+
+      <!-- Emergency Numbers -->
+      <div class="card">
+        <div class="section-title">Emergency Numbers</div>
+        <div class="emergency-grid">
+          <div class="emergency-num"><b>1091</b><span>Women</span></div>
+          <div class="emergency-num"><b>100</b><span>Police</span></div>
+          <div class="emergency-num"><b>112</b><span>Emergency</span></div>
+          <div class="emergency-num"><b>1098</b><span>Child</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <!-- AI Insight -->
+      <div class="insight-box">
+        <div style="font-weight:700; margin-bottom:8px;">✨ AI Insight</div>
+        <p style="font-size:14px; line-height:1.7; color:var(--muted);" id="aiInsight">
+          Fetching real-time safety insight for your location...
+        </p>
+      </div>
+
+      <!-- Live Safety Alerts -->
+      <div class="card mb-24">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+          <div class="section-title" style="margin:0;">Live Safety Alerts</div>
+          <button class="btn btn-outline btn-sm" onclick="loadAlerts(true)">🔄 Refresh</button>
+        </div>
+
+        <div id="alertsContainer">
+          <div class="alert-loading">
+            <div class="alert-spinner"></div>
+            Fetching real alerts for your area...
+          </div>
+        </div>
+
+        <a href="alert.html" class="btn btn-outline btn-full mt-16" style="font-size:13px;">View All Alerts →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let mediaRecorder = null;
+let audioChunks = [];
+let recInterval = null;
+let recSeconds = 0;
+let userLat = null, userLng = null, userCity = "your area";
+
+// ── SOS ───────────────────────────────────────────────────────────────────────
+async function triggerSOS() {
+  // 1. Start voice recording immediately in background
+  startSOSRecording();
+
+  // 2. Send SOS to backend
+  try {
+    const body = userLat
+      ? { latitude: userLat, longitude: userLng, address: userCity }
+      : { address: "Location unavailable" };
+    const res = await fetch("/api/sos/trigger", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) sessionStorage.setItem("sosId", data.incidentId);
+  } catch(e) {}
+
+  // 3. Navigate to SOS page after short delay so recording starts
+  setTimeout(() => { window.location.href = 'sos.html'; }, 400);
+}
+
+// Start recording silently when SOS is triggered
+function startSOSRecording() {
+  // If already recording, don't start again
+  if (mediaRecorder && mediaRecorder.state === 'recording') return;
+
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+
+    mediaRecorder.onstart = () => {
+      // Show recording bar
+      document.getElementById('recBar').classList.add('active');
+      document.getElementById('voiceBtn').style.background = '#ffe6ef';
+      document.getElementById('voiceBtn').style.border = '2px solid var(--pink)';
+      document.getElementById('voiceBtn').querySelector('.icon').textContent = '⏹';
+      document.getElementById('voiceBtn').querySelector('span').textContent = 'Stop';
+
+      recSeconds = 0;
+      recInterval = setInterval(() => {
+        recSeconds++;
+        const m = Math.floor(recSeconds / 60);
+        const s = recSeconds % 60;
+        document.getElementById('recTimer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+
+        // Auto-send at 15 seconds during SOS
+        if (recSeconds === 15 && sessionStorage.getItem("sosRecordingActive") === "1") {
+          mediaRecorder.requestData(); // flush current data
+          setTimeout(() => autoSendChunk(), 100);
+        }
+      }, 1000);
+
+      // Store stream reference so sos.html can stop it
+      sessionStorage.setItem("sosRecordingActive", "1");
+    };
+
+    mediaRecorder.onstop = () => {
+      clearInterval(recInterval);
+      sessionStorage.removeItem("sosRecordingActive");
+
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+
+      // Auto-send to emergency contacts
+      const formData = new FormData();
+      formData.append('recording', blob, `sos-recording-${Date.now()}.webm`);
+      formData.append('location', userCity || 'Unknown');
+      fetch('/api/recording/send', { method: 'POST', body: formData }).catch(() => {});
+
+      // Also save locally for download
+      const url = URL.createObjectURL(blob);
+      const area = document.getElementById('recordingArea');
+      if (area) {
+        area.innerHTML = `
+          <div class="card mb-16" style="padding:14px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--pink);">🎤 SOS Recording (${Math.floor(recSeconds/60)}:${(recSeconds%60).toString().padStart(2,'0')})</div>
+            <audio controls style="width:100%; margin-bottom:10px;" src="${url}"></audio>
+            <a href="${url}" download="sos-recording-${Date.now()}.webm" class="btn btn-outline btn-sm">⬇️ Download</a>
+          </div>`;
+      }
+      stream.getTracks().forEach(t => t.stop());
+    };
+
+    mediaRecorder.start(1000); // collect data every second
+  }).catch(() => {
+    // Microphone denied — proceed with SOS anyway, just no recording
+    console.warn('Microphone access denied for SOS recording');
+  });
+}
+
+// ── VOICE RECORDING ───────────────────────────────────────────────────────────
+function toggleRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    return;
+  }
+
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+
+    mediaRecorder.onstart = () => {
+      // Show recording bar
+      document.getElementById('recBar').classList.add('active');
+      document.getElementById('voiceBtn').style.background = '#ffe6ef';
+      document.getElementById('voiceBtn').style.border = '2px solid var(--pink)';
+      document.getElementById('voiceBtn').querySelector('.icon').textContent = '⏹';
+      document.getElementById('voiceBtn').querySelector('span').textContent = 'Stop';
+
+      // Start timer
+      recSeconds = 0;
+      recInterval = setInterval(() => {
+        recSeconds++;
+        const m = Math.floor(recSeconds / 60);
+        const s = recSeconds % 60;
+        document.getElementById('recTimer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      }, 1000);
+    };
+
+    mediaRecorder.onstop = () => {
+      // Hide recording bar, reset button
+      document.getElementById('recBar').classList.remove('active');
+      document.getElementById('voiceBtn').style.background = '';
+      document.getElementById('voiceBtn').style.border = '';
+      document.getElementById('voiceBtn').querySelector('.icon').textContent = '🎤';
+      document.getElementById('voiceBtn').querySelector('span').textContent = 'Voice Rec';
+      clearInterval(recInterval);
+
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      const area = document.getElementById('recordingArea');
+
+      area.innerHTML = `
+        <div class="card mb-16" style="padding:14px;">
+          <div style="font-weight:600; margin-bottom:10px; color:var(--pink);">🎤 Recording saved (${Math.floor(recSeconds/60)}:${(recSeconds%60).toString().padStart(2,'0')})</div>
+          <audio controls style="width:100%; margin-bottom:10px;" src="${url}"></audio>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="${url}" download="citysafe-recording-${Date.now()}.webm" class="btn btn-outline btn-sm">⬇️ Download</a>
+            <button class="btn btn-primary btn-sm" onclick="sendToContacts('${url}')">📤 Send to Emergency Contacts</button>
+          </div>
+        </div>`;
+
+      stream.getTracks().forEach(t => t.stop());
+    };
+
+    mediaRecorder.start();
+  }).catch(() => alert('❌ Microphone access required. Please allow microphone permission.'));
+}
+
+// Auto-send first 15s chunk during SOS
+async function autoSendChunk() {
+  if (!audioChunks || audioChunks.length === 0) return;
+  const blob = new Blob([...audioChunks], { type: 'audio/webm' });
+  const formData = new FormData();
+  formData.append('recording', blob, `sos-auto-${Date.now()}.webm`);
+  formData.append('location', userCity || 'Unknown');
+  formData.append('note', 'Auto-sent at 15 seconds after SOS trigger');
+  try {
+    await fetch('/api/recording/send', { method: 'POST', body: formData });
+    console.log('✅ 15s SOS recording auto-sent to emergency contacts');
+  } catch {}
+}
+
+async function sendToContacts(audioUrl) {
+  // Upload the recording blob to backend
+  const chunks = audioChunks;
+  if (!chunks || chunks.length === 0) { alert('No recording available.'); return; }
+
+  const blob = new Blob(chunks, { type: 'audio/webm' });
+  const formData = new FormData();
+  formData.append('recording', blob, `emergency-recording-${Date.now()}.webm`);
+  formData.append('location', userCity);
+
+  try {
+    const res = await fetch('/api/recording/send', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.success) {
+      alert(`✅ Recording sent to ${data.contactsNotified} emergency contact(s).\n\nNote: In production this would send via SMS/WhatsApp/Email.`);
+    } else {
+      alert('⚠️ ' + (data.message || 'Could not send to contacts. Make sure you have added trusted contacts in your profile.'));
+    }
+  } catch {
+    alert('⚠️ Could not reach server. Recording saved locally — download it and share manually.');
+  }
+}
+
+// ── REAL ALERTS ───────────────────────────────────────────────────────────────
+async function loadAlerts(forceRefresh = false) {
+  const container = document.getElementById('alertsContainer');
+  container.innerHTML = `<div class="alert-loading"><div class="alert-spinner"></div>Fetching real alerts for ${userCity}...</div>`;
+
+  try {
+    const params = new URLSearchParams({ city: userCity });
+    if (userLat) { params.set('lat', userLat); params.set('lng', userLng); }
+
+    const res = await fetch(`/api/alerts?${params}`);
+    const data = await res.json();
+
+    if (!data.success || !data.alerts.length) {
+      container.innerHTML = `<div class="alert-loading">No alerts found for your area.</div>`;
+      return;
+    }
+
+    container.innerHTML = data.alerts.map(a => `
+      <div class="alert-card ${a.type}" style="margin-bottom:12px;">
+        <div class="alert-time">${a.time}</div>
+        <h4>${a.icon} ${a.title}</h4>
+        <p>${a.desc}</p>
+        <div class="alert-source">📡 Source: ${a.source}</div>
+        <span class="alert-badge badge-${a.type}">${a.type.toUpperCase()}</span>
+      </div>`).join('');
+
+    // Update top banner with most severe alert
+    const top = data.alerts.find(a => a.type === 'high') || data.alerts[0];
+    document.getElementById('topAlertBanner').innerHTML = `
+      <strong>${top.icon} ${top.title}</strong><br>
+      <span style="font-size:13px; color:#c05000;">${top.desc.substring(0,100)}... Tap to view all →</span>`;
+
+    // Update AI insight
+    const weatherAlert = data.alerts.find(a => a.source && a.source.includes('Weather'));
+    const airAlert = data.alerts.find(a => a.source && a.source.includes('Air'));
+    let insight = `Real-time data for <strong>${userCity}</strong>: `;
+    if (weatherAlert) insight += weatherAlert.desc + ' ';
+    if (airAlert) insight += airAlert.desc;
+    if (!weatherAlert && !airAlert) insight += 'No major environmental hazards detected. Stay safe and aware of your surroundings.';
+    document.getElementById('aiInsight').innerHTML = insight;
+
+  } catch(e) {
+    container.innerHTML = `<div class="alert-loading">⚠️ Could not fetch alerts. Check your internet connection.</div>`;
+  }
+}
+
+// ── LOCATION ──────────────────────────────────────────────────────────────────
+function getLocation() {
+  if (!navigator.geolocation) { loadAlerts(); return; }
+
+  navigator.geolocation.getCurrentPosition(async pos => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
+    // Reverse geocode
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${userLat}&lon=${userLng}&format=json`, { headers: { 'Accept-Language': 'en' } });
+      const d = await r.json();
+      if (d.address) {
+        userCity = [d.address.suburb, d.address.city || d.address.town || d.address.village, d.address.state].filter(Boolean).join(', ');
+        document.getElementById('locationLabel').textContent = `AI Shield Active · ${userCity}`;
+      }
+    } catch {}
+
+    loadAlerts();
+  }, () => {
+    // Permission denied — load without coords
+    loadAlerts();
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+// ── MISC ──────────────────────────────────────────────────────────────────────
+function triggerFakeCall() {
+  alert('📞 Fake call initiated! Your phone will appear to ring.');
+}
+
+function openHelplines() {
+  alert('Emergency Numbers:\n📞 1091 – Women Helpline\n📞 100 – Police\n📞 112 – Emergency\n📞 1098 – Child Helpline');
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  if (localStorage.getItem('dark') === '1') {
+    document.body.classList.add('dark');
+    document.querySelector('.dark-btn').textContent = '☀️';
+  }
+
+  try {
+    const res = await fetch('/api/me');
+    const data = await res.json();
+    if (data.loggedIn) document.getElementById('userGreet').textContent = '👋 Hello, ' + data.user.name;
+  } catch {}
+
+  getLocation();
+});
+</script>
+</body>
+</html>

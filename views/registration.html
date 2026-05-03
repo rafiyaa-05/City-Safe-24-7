@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .auth-wrap { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; width: 100%; }
+  .auth-left { background: linear-gradient(135deg, #ff6fa5, #ff2d7a); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; color: #fff; }
+  .auth-left h2 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .auth-left p { font-size: 15px; opacity: .9; text-align: center; line-height: 1.7; }
+  .auth-right { display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; overflow-y: auto; }
+  .auth-form { width: 100%; max-width: 420px; }
+  .auth-form h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .auth-form .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .footer-link { text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted); }
+  .footer-link a { color: var(--pink); font-weight: 600; text-decoration: none; }
+  @media(max-width:768px){ .auth-wrap { grid-template-columns: 1fr; } .auth-left { display: none; } }
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div style="font-size:72px; margin-bottom:20px;">🌸</div>
+    <h2>Join City Safe 💕</h2>
+    <p>Create your account and get protected by our AI-powered safety network. Available for women across Maharashtra.</p>
+    <div style="margin-top:32px; font-size:14px; opacity:.8; line-height:2;">
+      ✅ AI Safety Alerts<br>
+      ✅ SOS Emergency System<br>
+      ✅ Guardian Volunteer Network<br>
+      ✅ Live Location Tracking
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form">
+      <h1>Create Account 🛡️</h1>
+      <div class="sub">Join thousands of women staying safe with City Safe</div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" id="regName" class="form-input" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address *</label>
+        <input type="email" id="regEmail" class="form-input" placeholder="you@example.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Password *</label>
+          <input type="password" id="regPassword" class="form-input" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password *</label>
+          <input type="password" id="regConfirm" class="form-input" placeholder="Repeat password">
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="register()">🌸 Create Account</button>
+
+      <div class="footer-link">
+        Already have an account? <a href="login.html">Login here</a>
+        <div style="font-size:12px; color:#bbb; margin-top:6px;">Women & Girls only · Maharashtra residents</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function register() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('regConfirm').value;
+  if (!name || !email || !password || !confirmPassword) { alert("❌ Please fill in all fields."); return; }
+  try {
+    const res = await fetch("/api/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, password, confirmPassword }) });
+    const data = await res.json();
+    if (data.success) { alert("✅ Registration Successful!"); window.location.href = data.redirect; }
+    else { alert("❌ " + data.message); }
+  } catch { alert("❌ Server error. Please try again."); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Additional Details</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4c9d6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #ffe6ef;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  overflow-y: auto;
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.back {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.step {
+  margin-left: auto;
+  color: #ff2c8b;
+  font-size: 12px;
+}
+
+/* PROGRESS */
+.progress {
+  height: 4px;
+  background: #ffd1e3;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 85%;
+  height: 100%;
+  background: #ff2c8b;
+  position: absolute;
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  font-size: 20px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: white;
+}
+
+.input:focus {
+  outline: none;
+  border: 1px solid #ff2c8b;
+  box-shadow: 0 0 5px rgba(255, 44, 139, 0.3);
+}
+
+/* NOTE */
+.note {
+  background: #f3e4f6;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* BACK BTN */
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 30px;
+  border: 1px solid #ff9cc4;
+  margin-top: 10px;
+  background: transparent;
+  color: #ff2c8b;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="back" onclick="goBack()">←</div>
+    <div class="title">Additional Details</div>
+    <div class="step">Step 5 of 6</div>
+  </div>
+
+  <div class="progress"></div>
+
+  <h2>Complete Your Profile 💕</h2>
+
+  <div class="sub">
+    Fill in your details to complete your volunteer registration.
+  </div>
+
+  <div class="note">
+    💡 All data is pre-filled from your Aadhaar. Please verify and update if needed.
+  </div>
+
+  <!-- Form Fields -->
+  <form id="detailsForm">
+
+    <div class="form-group">
+      <label class="label">Full Name *</label>
+      <input type="text" id="fullName" class="input" placeholder="Enter your full name" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Email Address *</label>
+      <input type="email" id="email" class="input" placeholder="example@gmail.com" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Phone Number *</label>
+      <input type="tel" id="phone" class="input" placeholder="+91 98200 12345" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Date of Birth (YYYY-MM-DD) *</label>
+      <input type="date" id="dob" class="input" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Address *</label>
+      <input type="text" id="address" class="input" placeholder="Street address" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">City *</label>
+      <input type="text" id="city" class="input" placeholder="Your city" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">State *</label>
+      <input type="text" id="state" class="input" placeholder="Your state" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">PIN Code *</label>
+      <input type="text" id="pincode" class="input" placeholder="6-digit PIN code" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Emergency Contact Name *</label>
+      <input type="text" id="emergencyName" class="input" placeholder="Contact person name" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Emergency Contact Phone *</label>
+      <input type="tel" id="emergencyPhone" class="input" placeholder="+91 XXXXX XXXXX" required>
+    </div>
+
+    <div class="form-group">
+      <label class="label">Relationship to Emergency Contact *</label>
+      <input type="text" id="emergencyRelation" class="input" placeholder="e.g., Mother, Sister, Friend" required>
+    </div>
+
+    <button type="submit" class="btn" onclick="return submitForm(event)">📤 Submit Application</button>
+    <button type="button" class="back-btn" onclick="goBack()">← Back</button>
+
+  </form>
+
+</div>
+
+<script>
+// Try to populate with pre-filled data from volunteer registration
+window.addEventListener("load", () => {
+  const volunteerData = sessionStorage.getItem("volunteerData");
+  if (volunteerData) {
+    const data = JSON.parse(volunteerData);
+    if (data.name) document.getElementById("fullName").value = data.name;
+    if (data.email) document.getElementById("email").value = data.email;
+    if (data.phone) document.getElementById("phone").value = data.phone;
+  }
+});
+
+function submitForm(event) {
+  event.preventDefault();
+
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const dob = document.getElementById("dob").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const state = document.getElementById("state").value.trim();
+  const pincode = document.getElementById("pincode").value.trim();
+  const emergencyName = document.getElementById("emergencyName").value.trim();
+  const emergencyPhone = document.getElementById("emergencyPhone").value.trim();
+  const emergencyRelation = document.getElementById("emergencyRelation").value.trim();
+
+  // Validation
+  if (!fullName || !email || !phone || !dob || !address || !city || !state || !pincode || !emergencyName || !emergencyPhone || !emergencyRelation) {
+    alert("❌ Please fill in all required fields.");
+    return false;
+  }
+
+  if (pincode.length !== 6 || isNaN(pincode)) {
+    alert("❌ Please enter a valid 6-digit PIN code.");
+    return false;
+  }
+
+  // Store application data
+  const applicationData = {
+    fullName,
+    email,
+    phone,
+    dob,
+    address,
+    city,
+    state,
+    pincode,
+    emergencyName,
+    emergencyPhone,
+    emergencyRelation,
+    selfie: sessionStorage.getItem("volunteerSelfie"),
+    timestamp: new Date().toISOString()
+  };
+
+  localStorage.setItem("volunteerApplication", JSON.stringify(applicationData));
+  sessionStorage.removeItem("volunteerSelfie");
+  sessionStorage.removeItem("volunteerData");
+
+  alert("✅ Application Submitted Successfully!");
+  window.location.href = "congratulations.html";
+  return false;
+}
+
+function goBack() {
+  window.location.href = "selfie.html";
+}
+</script>
+
+</body>
+</html>

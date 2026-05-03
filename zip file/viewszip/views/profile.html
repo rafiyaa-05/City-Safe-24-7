@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile UI</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #eac3cf;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Phone */
+.app {
+  width: min(360px, 100%);
+  max-width: 360px;
+  height: 720px;
+  background: #fff;
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #ff7aa2, #ff4f8b);
+  color: white;
+  padding: 15px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-right: 10px;
+}
+
+.profile h2 {
+  margin: 0;
+}
+
+.profile p {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* CONTENT */
+.content {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* Section Title */
+.title {
+  font-size: 11px;
+  color: #888;
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+/* Card */
+.card {
+  background: #f9f9f9;
+  border-radius: 20px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* Contact Row */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+.row + .row {
+  border-top: 1px solid #eee;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #8a4fff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.green {
+  color: #2ecc71;
+  font-size: 12px;
+}
+
+/* Add Contact */
+.add {
+  color: #ff2d7a;
+  font-weight: bold;
+}
+
+/* Toggle */
+.switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background: #ff2d7a;
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Dark mode overrides */
+.dark .app {
+  background: #1f1f2a;
+}
+
+.dark .header {
+  background: linear-gradient(135deg, #483b5c, #453657);
+  color: #f4d0f0;
+}
+
+.dark .header p,
+.dark .status,
+.dark .sub,
+.dark .card,
+.dark .nav,
+.dark .info,
+.dark .row,
+.dark .title {
+  color: #eee;
+}
+
+.dark .card {
+  background: #2a2a33;
+  border: 1px solid #3f3f4d;
+}
+
+.dark .nav {
+  background: #1f1f2a;
+  border-top: 1px solid #3f3f4d;
+}
+
+.dark .nav a {
+  color: #ccc;
+}
+
+.dark .nav .active a,
+.dark .nav .active {
+  color: #ff7aa2;
+}
+
+.dark .phone, .dark .app {
+  background: #16161f;
+}
+
+.dark body {
+  background: #12121b;
+}
+
+/* Support for body.dark-mode class */
+body.dark-mode {
+  background: #12121b;
+}
+
+body.dark-mode .app {
+  background: #1a1a2e;
+  color: #f0f0f0;
+}
+
+body.dark-mode .header {
+  background: linear-gradient(135deg, #483b5c, #453657);
+  color: #f4d0f0;
+}
+
+body.dark-mode .header p,
+body.dark-mode .status,
+body.dark-mode .sub,
+body.dark-mode .card,
+body.dark-mode .nav,
+body.dark-mode .info,
+body.dark-mode .row,
+body.dark-mode .title {
+  color: #eee;
+}
+
+body.dark-mode .card,
+body.dark-mode .content {
+  background: #2a2a3e;
+  border: 1px solid #3f3f4d;
+}
+
+body.dark-mode .nav {
+  background: #1a1a2e;
+  border-top: 1px solid #3f3f4d;
+}
+
+body.dark-mode .nav a {
+  color: #ccc;
+}
+
+body.dark-mode .nav .active a,
+body.dark-mode .nav .active {
+  color: #ff7aa2;
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.nav .active {
+  color: #ff2d7a;
+  font-weight: bold;
+}
+
+/* Dark Toggle Button */
+.dark-toggle {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .dark-toggle {
+  background: #2a2a3e;
+  color: #ff7aa2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="profile">
+      <div class="avatar">P</div>
+      <div>
+        <h2>Priya Sharma 💕</h2>
+        <p>AI Shield Active · Protected</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- CONTACTS -->
+    <div class="title">TRUSTED CONTACTS 💗</div>
+    <div class="card">
+
+      <div class="row">
+        <div class="left">
+          <div class="icon">A</div>
+          <div>
+            <b>Ammi (Mom)</b><br>
+            <small>+91 98200 XXXX · Primary</small>
+          </div>
+        </div>
+        <div class="green">● Active</div>
+      </div>
+
+      <div class="row">
+        <div class="left">
+          <div class="icon" style="background:#ff5c9d;">A</div>
+          <div>
+            <b>Anjali (Sister)</b><br>
+            <small>+91 99200 XXXX · Secondary</small>
+          </div>
+        </div>
+        <div class="green">● Active</div>
+      </div>
+
+      <div class="row add" onclick="addContact()">
+        ➕ Add Trusted Contact<br>
+      </div>
+
+    </div>
+
+    <!-- VOLUNTEER -->
+    <div class="title">VOLUNTEER STATUS 💕</div>
+    <div class="card">
+      <div class="row">
+        <div class="left">
+          <div class="icon">👑</div>
+          <div>
+            <b>Guardian Volunteer</b><br>
+            <small style="color:#ff9800;">Pending · HFZ-VOL-2024-7391</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY -->
+    <div class="title">PRIVACY & SECURITY 🔒</div>
+    <div class="card">
+
+      <div class="row">
+        <div class="left">🌙 Dark Mode</div>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="left">🔗 Blockchain Secure Mode</div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="left">⌚ Smartwatch Connected</div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="left">🕵 Stealth Mode</div>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div><a href="sos1.html">🏠 Home</a></div>
+    <div><a href="livetracking.html">📍 Track</a></div>
+    <div><a href="deepfakereport.html">🛡 Report</a></div>
+    <div><a href="guardian.html">👥 Community</a></div>
+    <div class="active"><a href="profile.html">👤 Profile</a></div>
+  </div>
+
+</div>
+
+<script>
+function addContact(){
+  alert("➕ Add contact feature coming soon!");
+}
+
+// Unified Dark Mode Toggle
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  document.body.classList.toggle('dark', isDark); // Keep legacy support
+  localStorage.setItem('darkMode', isDark ? '1' : '0');
+  updateToggleIcon();
+  updatePrivacyToggle();
+}
+
+function updateToggleIcon() {
+  const toggle = document.querySelector('.dark-toggle');
+  if (document.body.classList.contains('dark-mode')) {
+    toggle.textContent = '☀️';
+  } else {
+    toggle.textContent = '🌙';
+  }
+}
+
+function updatePrivacyToggle() {
+  const darkModeInput = document.querySelector('.switch input[type="checkbox"]');
+  if (darkModeInput) {
+    darkModeInput.checked = document.body.classList.contains('dark-mode');
+  }
+}
+
+// Privacy switch handler
+const darkModeInput = document.querySelector('.switch input[type="checkbox"]');
+
+function applyDarkMode(enabled) {
+  if (enabled) {
+    document.body.classList.add('dark-mode');
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark-mode');
+    document.body.classList.remove('dark');
+  }
+  localStorage.setItem('darkMode', enabled ? '1' : '0');
+  updateToggleIcon();
+}
+
+if (darkModeInput) {
+  darkModeInput.addEventListener('change', () => {
+    applyDarkMode(darkModeInput.checked);
+  });
+}
+
+// Load dark mode preference on page load
+window.addEventListener('load', () => {
+  if (localStorage.getItem('darkMode') === '1') {
+    applyDarkMode(true);
+  }
+  updateToggleIcon();
+  updatePrivacyToggle();
+});
+</script>
+
+</body>
+</html>

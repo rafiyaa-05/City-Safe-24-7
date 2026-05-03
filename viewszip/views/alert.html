@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Safety Alerts</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#f7c7d9,#ffd6e7);
+}
+
+/* PHONE */
+.phone{
+    width:min(360px,100%);
+    max-width:360px;
+    height:720px;
+    background:#fff;
+    border-radius:40px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    overflow:hidden;
+    position:relative;
+}
+
+/* STATUS */
+.status{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 20px;
+    font-size:14px;
+}
+
+/* NOTCH */
+.notch{
+    width:120px;
+    height:25px;
+    background:black;
+    border-radius:20px;
+    margin:0 auto 10px;
+}
+
+/* HEADER */
+.header{
+    padding:0 20px;
+}
+
+.header h2{
+    font-size:22px;
+    font-weight:700;
+    color:#333;
+}
+
+.header p{
+    font-size:12px;
+    color:#888;
+}
+
+/* INSIGHT */
+.insight{
+    margin:15px 20px;
+    padding:15px;
+    border-radius:20px;
+    background:#ffe6ef;
+    border:1px solid #ffc3d7;
+}
+
+.insight small{
+    color:#ff4d88;
+    font-weight:600;
+    font-size:11px;
+}
+
+.insight p{
+    font-size:12px;
+    margin-top:5px;
+    color:#555;
+}
+
+/* CARDS */
+.card{
+    margin:10px 20px;
+    padding:15px;
+    border-radius:20px;
+    background:#f9f9f9;
+    position:relative;
+}
+
+/* LEFT COLOR BAR */
+.card::before{
+    content:'';
+    position:absolute;
+    left:0;
+    top:10px;
+    bottom:10px;
+    width:5px;
+    border-radius:5px;
+}
+
+/* COLORS */
+.high::before{background:#ff4d4d;}
+.moderate::before{background:#ff9900;}
+.safe::before{background:#28c76f;}
+.cyber::before{background:#ff9900;}
+
+/* TITLE */
+.card h4{
+    font-size:14px;
+    color:#333;
+}
+
+.card p{
+    font-size:12px;
+    color:#666;
+    margin-top:5px;
+}
+
+/* TIME */
+.time{
+    position:absolute;
+    right:15px;
+    top:15px;
+    font-size:11px;
+    color:#999;
+}
+
+/* BADGE */
+.badge{
+    display:inline-block;
+    margin-top:10px;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.badge.high{background:#ffe6e6;color:#ff4d4d;}
+.badge.moderate{background:#fff3e0;color:#ff9900;}
+.badge.safe{background:#e6fff2;color:#28c76f;}
+.badge.cyber{background:#fff3e0;color:#ff9900;}
+
+/* ACTION */
+.action{
+    float:right;
+    font-size:12px;
+    color:#ff4d88;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+/* BOTTOM NAV */
+.nav{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:70px;
+    background:#fff;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    border-top:1px solid #eee;
+}
+
+.nav div{
+    text-align:center;
+    font-size:10px;
+    color:#888;
+}
+
+.nav .active{
+    color:#ff4d88;
+    font-weight:bold;
+}
+
+.dot{
+    position:absolute;
+    top:-5px;
+    right:12px;
+    background:#ff4d88;
+    color:#fff;
+    font-size:9px;
+    padding:2px 5px;
+    border-radius:50%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+    <div class="notch"></div>
+
+    <div class="header">
+        <h2>AI Safety Alerts ✨</h2>
+        <p>Real-time AI predictions · Mumbai</p>
+    </div>
+
+    <div class="insight">
+        <small>● AI INSIGHT ACTIVE 💕</small>
+        <p>Andheri–Dadar WEH shows elevated risk after 8 PM. Sea-link route is safer tonight.</p>
+    </div>
+
+    <!-- CARD 1 -->
+    <div class="card high">
+        <div class="time">8 PM</div>
+        <h4>🔴 High Risk: Andheri SV Road</h4>
+        <p>3 incidents in last 2 hours near SV Road. Street lighting outage near Lokhandwala.</p>
+        <span class="badge high">HIGH RISK</span>
+        <span class="action">View Route →</span>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="card moderate">
+        <div class="time">Now</div>
+        <h4>🟡 Crowd Surge: Dadar Station</h4>
+        <p>Unusual crowd density at Dadar Station exit. Use designated women's zone.</p>
+        <span class="badge moderate">MODERATE</span>
+        <span class="action">Stay Alert →</span>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="card safe">
+        <div class="time">6:45 PM</div>
+        <h4>🟢 Safe Route: Marine Drive</h4>
+        <p>High police visibility tonight. Safe conditions predicted until 11 PM.</p>
+        <span class="badge safe">SAFE</span>
+        <span class="action">Open Map →</span>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="card cyber">
+        <div class="time">Today</div>
+        <h4>⚠ Cyber Alert: Deepfake Spike</h4>
+        <p>12 new deepfake reports in Mumbai this week — 40% increase. Scan your social media.</p>
+        <span class="badge cyber">CYBER RISK</span>
+        <span class="action">Report Now →</span>
+    </div>
+
+    <!-- NAVBAR -->
+    <div class="nav">
+        <div class="active">🏠<br>Home</div>
+        <div>📍<br>Track</div>
+        <div style="position:relative;">📄<span class="dot">2</span><br>Report</div>
+        <div>👥<br>Community</div>
+        <div>👤<br>Profile</div>
+    </div>
+
+</div>
+
+<script>
+// Example small interaction (click alert)
+document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click',()=>{
+        alert("Opening details...");
+    });
+});
+</script>
+
+</body>
+</html>

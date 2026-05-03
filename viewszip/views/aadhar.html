@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aadhaar Verification</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4c9d6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 740px;
+  background: #ffe6ef;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.back {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.step {
+  margin-left: auto;
+  color: #ff2c8b;
+  font-size: 12px;
+}
+
+/* PROGRESS */
+.progress {
+  height: 4px;
+  background: #ffd1e3;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 40%;
+  height: 100%;
+  background: #ff2c8b;
+  position: absolute;
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  font-size: 20px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* INFO BOX */
+.info {
+  background: #f3e4f6;
+  border: 1px solid #e0c8eb;
+  padding: 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+/* INPUT */
+.input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 15px;
+  border: none;
+  background: #eee;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 3px;
+  margin: 10px 0;
+}
+
+/* UPLOAD */
+.upload {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.box {
+  flex: 1;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed #ddd;
+}
+
+.box.active {
+  border: 2px solid #00c853;
+  background: #eafff1;
+}
+
+.box i {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* NOTE */
+.note {
+  background: #ffe3ec;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  margin-top: 20px;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* BACK BTN */
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 30px;
+  border: 1px solid #ff9cc4;
+  margin-top: 10px;
+  background: transparent;
+  color: #ff2c8b;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="back" onclick="goBack()">←</div>
+    <div class="title">Aadhaar Verification</div>
+    <div class="step">Step 2 of 6</div>
+  </div>
+
+  <div class="progress"></div>
+
+  <h2>Aadhaar Card Verification <span style="color:#7b5cff;">ID</span></h2>
+
+  <div class="sub">
+    Your Aadhaar details are verified directly with UIDAI. No data is stored on our servers.
+  </div>
+
+  <div class="info">
+    🏛️ <b>UIDAI Secure Verification</b><br>
+    End-to-end encrypted · Only age, name & address verified · No biometrics stored
+  </div>
+
+  <div class="sub"><b>Aadhaar Number (12 digits)</b></div>
+
+  <input class="input" id="aadhaar" maxlength="14" placeholder="1234 5678 9012">
+
+  <div class="sub"><b>Upload Aadhaar Card</b></div>
+
+  <div class="upload">
+    <div class="box active" onclick="selectBox(this)">
+      <i>✅</i>
+      Front Side ✓<br><small>आगे की तरफ</small>
+    </div>
+
+    <div class="box" onclick="selectBox(this)">
+      <i>📤</i>
+      Back Side<br><small>पीछे की तरफ</small>
+    </div>
+  </div>
+
+  <div class="note">
+    🔒 256-bit encrypted · UIDAI certified · Only verifies age, name & address.
+  </div>
+
+  <button class="btn" onclick="verify()">ID Verify with Aadhaar</button>
+
+  <button class="back-btn" onclick="goBack()">← Back</button>
+
+</div>
+
+<script>
+// format aadhaar spacing
+document.getElementById("aadhaar").addEventListener("input", function(e) {
+  let value = e.target.value.replace(/\D/g, "").substring(0,12);
+  value = value.replace(/(.{4})/g, "$1 ").trim();
+  e.target.value = value;
+});
+
+// toggle upload boxes
+function selectBox(el) {
+  document.querySelectorAll(".box").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// verify button
+function verify() {
+  let aadhaar = document.getElementById("aadhaar").value.replace(/\s/g, "");
+
+  if (aadhaar.length !== 12) {
+    alert("❌ Enter valid 12-digit Aadhaar");
+  } else {
+    window.location.href = 'otp.html';
+  }
+}
+
+// back navigation
+function goBack() {
+  window.location.href = 'volunteer.html';
+}
+</script>
+
+</body>
+</html>

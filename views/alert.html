@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Safety Alerts – City Safe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container-md">
+
+  <div class="hero-header">
+    <h1>AI Safety Alerts ✨</h1>
+    <p>Real-time AI predictions · Mumbai · Updated just now</p>
+  </div>
+
+  <div class="notice notice-info mb-24">
+    <strong>● AI INSIGHT ACTIVE 💕</strong><br>
+    Andheri–Dadar WEH shows elevated risk after 8 PM. Sea-link route is safer tonight.
+  </div>
+
+  <div class="grid-2" style="gap:20px;">
+    <div>
+      <div class="alert-card high">
+        <div class="alert-time">8 PM</div>
+        <h4>🔴 High Risk: Andheri SV Road</h4>
+        <p>3 incidents in last 2 hours near SV Road. Street lighting outage near Lokhandwala.</p>
+        <span class="alert-badge badge-high">HIGH RISK</span>
+        <a href="#" style="float:right; font-size:12px; color:var(--pink); margin-top:10px; display:block;">View Route →</a>
+      </div>
+
+      <div class="alert-card moderate">
+        <div class="alert-time">Now</div>
+        <h4>🟡 Crowd Surge: Dadar Station</h4>
+        <p>Unusual crowd density at Dadar Station exit. Use designated women's zone.</p>
+        <span class="alert-badge badge-moderate">MODERATE</span>
+        <a href="#" style="float:right; font-size:12px; color:var(--pink); margin-top:10px; display:block;">Stay Alert →</a>
+      </div>
+    </div>
+    <div>
+      <div class="alert-card safe">
+        <div class="alert-time">6:45 PM</div>
+        <h4>🟢 Safe Route: Marine Drive</h4>
+        <p>High police visibility tonight. Safe conditions predicted until 11 PM.</p>
+        <span class="alert-badge badge-safe">SAFE</span>
+        <a href="livetracking.html" style="float:right; font-size:12px; color:var(--pink); margin-top:10px; display:block;">Open Map →</a>
+      </div>
+
+      <div class="alert-card cyber">
+        <div class="alert-time">Today</div>
+        <h4>⚠️ Cyber Alert: Deepfake Spike</h4>
+        <p>12 new deepfake reports in Mumbai this week — 40% increase. Scan your social media.</p>
+        <span class="alert-badge badge-cyber">CYBER RISK</span>
+        <a href="deepfakereport.html" style="float:right; font-size:12px; color:var(--pink); margin-top:10px; display:block;">Report Now →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark') === '1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent = '☀️'; }
+});
+</script>
+</body>
+</html>

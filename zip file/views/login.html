@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .auth-wrap { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; width: 100%; }
+  .auth-left { background: linear-gradient(135deg, #ff6fa5, #ff2d7a); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; color: #fff; }
+  .auth-left h2 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+  .auth-left p { font-size: 16px; opacity: .9; text-align: center; line-height: 1.6; }
+  .auth-left .shield { font-size: 80px; margin-bottom: 24px; }
+  .auth-right { display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
+  .auth-form { width: 100%; max-width: 400px; }
+  .auth-form h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .auth-form .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .input-icon { position: relative; }
+  .input-icon .form-input { padding-right: 44px; }
+  .input-icon .eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; }
+  .alt-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .alt-btn { padding: 11px; border-radius: 10px; border: 1.5px solid #e8d0da; background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; color: var(--text); transition: all .2s; }
+  .alt-btn:hover { background: var(--pink-pale); border-color: var(--pink); }
+  .divider-text { text-align: center; color: var(--muted); font-size: 13px; margin: 16px 0; position: relative; }
+  .divider-text::before, .divider-text::after { content: ""; position: absolute; top: 50%; width: 42%; height: 1px; background: #e8d0da; }
+  .divider-text::before { left: 0; } .divider-text::after { right: 0; }
+  .footer-link { text-align: center; margin-top: 20px; font-size: 14px; color: var(--muted); }
+  .footer-link a { color: var(--pink); font-weight: 600; text-decoration: none; }
+  @media(max-width:768px){ .auth-wrap { grid-template-columns: 1fr; } .auth-left { display: none; } }
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="shield">🛡️</div>
+    <h2>Welcome Back 💕</h2>
+    <p>Your AI-powered safety guardian is here.<br>Protecting women of Maharashtra 24×7.</p>
+    <div style="margin-top:32px; display:flex; gap:16px; font-size:28px;">💖 ✨ 🌸</div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form">
+      <h1>Sign In to City Safe 🌸</h1>
+      <div class="sub">Secure login for women of Maharashtra</div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-icon">
+          <input type="password" id="password" class="form-input" placeholder="••••••••">
+          <span class="eye" onclick="togglePassword()">👁️</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="login()">💞 Login Securely</button>
+
+      <div class="divider-text">OR</div>
+
+      <div class="alt-btns">
+        <div class="alt-btn">📱 OTP Login</div>
+        <div class="alt-btn">🆔 Aadhaar SSO</div>
+      </div>
+
+      <div class="footer-link">
+        Don't have an account? <a href="registration.html">Register here 💕</a>
+        <div style="font-size:12px; color:#bbb; margin-top:6px;">Women & Girls only · Maharashtra residents</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) { alert("❌ Please enter email and password."); return; }
+  try {
+    const res = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+    const data = await res.json();
+    if (data.success) { window.location.href = data.redirect; }
+    else { alert("❌ " + data.message); }
+  } catch { alert("❌ Server error. Please try again."); }
+}
+function togglePassword() {
+  const i = document.getElementById('password');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+</script>
+</body>
+</html>

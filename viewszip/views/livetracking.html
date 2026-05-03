@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f8d7e3, #f3c3d6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 10px;
+}
+
+/* App container */
+.app {
+  width: min(360px, 100%);
+  max-width: 360px;
+  height: 720px;
+  background: #fff;
+  border-radius: 30px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+/* 🔥 SCROLLBAR STYLE */
+.app::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app::-webkit-scrollbar-track {
+  background: #f3c3d6;
+  border-radius: 10px;
+}
+
+.app::-webkit-scrollbar-thumb {
+  background: #ff2d7a;
+  border-radius: 10px;
+}
+
+.app::-webkit-scrollbar-thumb:hover {
+  background: #e6005c;
+}
+
+/* Firefox */
+.app {
+  scrollbar-width: thin;
+  scrollbar-color: #ff2d7a #f3c3d6;
+}
+
+/* Header */
+.header {
+  padding: 0 5px;
+  margin-bottom: 12px;
+}
+.header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.header p {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Map Card */
+.map-card {
+  background: #f6eef2;
+  border-radius: 20px;
+  padding: 10px;
+  position: relative;
+}
+
+/* Badges */
+.live-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ff2d7a;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.sos-small {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff2d7a;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Fake Map */
+.map {
+  height: 260px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #e8dbe2, #f3e5ec);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Crosshair */
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: #ff2d7a;
+  transform: translate(-50%, -50%);
+}
+.crosshair::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #ff2d7a;
+  top: 50%;
+}
+
+/* Pulse */
+.pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: #ff2d7a;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.pulse::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px dashed #ff2d7a;
+  border-radius: 50%;
+  top: -30px;
+  left: -30px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Places */
+.place {
+  position: absolute;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: white;
+}
+
+.borivali { top: 20px; left: 45%; }
+.powai { top: 70px; right: 20px; }
+.kurla { top: 130px; right: 60px; }
+.bandra { bottom: 20px; left: 30px; }
+.dahisar { bottom: 50px; left: 120px; }
+
+/* Risk */
+.risk-zone {
+  position: absolute;
+  right: 40px;
+  bottom: 80px;
+  border: 2px dashed #ff2d7a;
+  padding: 6px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+/* Map Controls */
+.map-controls {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.map-controls button {
+  margin: 3px 0;
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+}
+
+/* Info Row */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.info {
+  background: #f3f3f3;
+  padding: 10px;
+  border-radius: 12px;
+  width: 30%;
+  font-size: 12px;
+}
+.info span {
+  color: #888;
+  font-size: 10px;
+}
+.pink {
+  color: #ff2d7a;
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+.share {
+  flex: 1;
+  background: linear-gradient(135deg, #ff2d7a, #ff6aa2);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+}
+.history {
+  flex: 1;
+  background: #eee;
+  border: none;
+  border-radius: 20px;
+}
+
+/* Toggle */
+.toggle-card {
+  background: #f3f3f3;
+  border-radius: 15px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+.switch input {
+  display: none;
+}
+.slider {
+  position: absolute;
+  background: #ccc;
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+}
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s;
+}
+input:checked + .slider {
+  background: #ff2d7a;
+}
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  font-size: 12px;
+}
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.nav div {
+  text-align: center;
+  color: #777;
+}
+.nav .active {
+  color: #ff2d7a;
+}
+
+/* DARK MODE */
+.dark-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode {
+  background: #0f0f1e;
+}
+
+.dark-mode .app {
+  background: #1a1a2e;
+  color: #f0f0f0;
+}
+
+.dark-mode .header h2,
+.dark-mode .header p {
+  color: #ff7aa2;
+}
+
+.dark-mode .map-card {
+  background: #2a2a3e;
+}
+
+.dark-mode .live-badge,
+.dark-mode .sos-small {
+  background: #ff2d7a;
+}
+
+.dark-mode .map {
+  background: #1f1f2e;
+}
+
+.dark-mode .info {
+  background: #2a2a3e;
+  color: #eee;
+}
+
+.dark-mode .share,
+.dark-mode .history {
+  background: #2a2a3e;
+  color: #eee;
+  border: 1px solid #3f3f4d;
+}
+
+.dark-mode .toggle-card {
+  background: #2a2a3e;
+  color: #eee;
+}
+
+.dark-mode .nav {
+  color: #999;
+}
+
+.dark-mode .nav a {
+  color: #999;
+}
+
+.dark-mode .nav .active {
+  color: #ff7aa2;
+}
+
+.dark-mode .dark-toggle {
+  background: #2a2a3e;
+  color: #ff7aa2;
+}
+</style>
+
+<body>
+
+<div class="app">
+
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <div class="header">
+    <h2>Live Tracking 📍</h2>
+    <p>Real-time location · Geo-fence active</p>
+  </div>
+
+  <div class="map-card">
+    <div class="live-badge">LIVE · Andheri West</div>
+    <div class="sos-small">SOS 🚨</div>
+
+    <div class="map">
+      <div class="crosshair"></div>
+      <div class="pulse"></div>
+
+      <div class="place borivali">Borivali</div>
+      <div class="place powai">Powai</div>
+      <div class="place kurla">Kurla</div>
+      <div class="place bandra">Bandra</div>
+      <div class="place dahisar">Dahisar</div>
+
+      <div class="risk-zone">⚠ Risk Zone</div>
+
+      <div class="map-controls">
+        <button>+</button>
+        <button>-</button>
+        <button>⦿</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info"><span>LOCATION</span><b>Andheri W</b></div>
+    <div class="info"><span>UPDATED</span><b>Just now</b></div>
+    <div class="info"><span>BATTERY</span><b class="pink">76%</b></div>
+  </div>
+
+  <div class="buttons">
+    <button class="share">📍 Share Location / शेयर करें</button>
+    <button class="history">📋 History</button>
+  </div>
+
+  <div class="toggle-card">
+    <div>
+      <b>Geo-fence Active</b>
+      <p>500m radius · Alert if crossed</p>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="nav">
+    <div><a href="sos1.html"><span>🏠</span><span>Home</span></a></div>
+    <div class="active"><a href="livetracking.html"><span>📍</span><span>Track</span></a></div>
+    <div><a href="deepfakereport.html"><span>🛡️</span><span>Report</span></a></div>
+    <div><a href="guardian.html"><span>👥</span><span>Community</span></a></div>
+    <div><a href="profile.html"><span>👤</span><span>Profile</span></a></div>
+  </div>
+
+</div>
+
+<script>
+const shareButton = document.querySelector(".share");
+const historyButton = document.querySelector(".history");
+
+function showLocation(position) {
+  const { latitude, longitude, accuracy } = position.coords;
+  alert(`📍 Current location: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (±${accuracy.toFixed(1)}m)`);
+}
+
+function handleLocationError(err) {
+  alert(`Unable to retrieve location: ${err.message}`);
+}
+
+shareButton.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition((pos) => {
+    showLocation(pos);
+    alert('📍 Location shared successfully!');
+  }, handleLocationError, { enableHighAccuracy: true, timeout: 10000 });
+});
+
+historyButton.addEventListener("click", () => {
+  alert("📋 Opening location history...");
+});
+
+// Auto-refresh current location when screen is visible
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(showLocation, handleLocationError, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', isDark ? '1' : '0');
+  updateToggleIcon();
+}
+
+function updateToggleIcon() {
+  const toggle = document.querySelector('.dark-toggle');
+  if (document.body.classList.contains('dark-mode')) {
+    toggle.textContent = '☀️';
+  } else {
+    toggle.textContent = '🌙';
+  }
+}
+
+// Load dark mode preference on page load
+window.addEventListener('load', () => {
+  if (localStorage.getItem('darkMode') === '1') {
+    document.body.classList.add('dark-mode');
+  }
+  updateToggleIcon();
+});
+</script>
+
+</body>
+</html>

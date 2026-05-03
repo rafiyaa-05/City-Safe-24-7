@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP Verification – City Safe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="aadhar.html">← Back</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+<div class="page">
+<div class="container-sm">
+
+  <div class="step-header">
+    <a href="aadhar.html" class="step-back">←</a>
+    <div class="step-title">Two-Step Verification</div>
+    <div class="step-badge">Step 3 of 6</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>OTP Verification</span><span>60%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:6px;">Enter OTP 🔐</h2>
+    <p class="text-muted" style="font-size:14px; margin-bottom:20px;">Two-step verification: Aadhaar OTP + Mobile OTP for maximum security.</p>
+
+    <div style="display:flex; gap:10px; margin-bottom:20px;">
+      <div style="flex:1; padding:12px; border-radius:12px; text-align:center; background:var(--pink-pale); border:2px solid var(--pink); color:var(--pink); font-size:13px; font-weight:600;">1. Aadhaar OTP ✓</div>
+      <div style="flex:1; padding:12px; border-radius:12px; text-align:center; background:#f5f5f5; font-size:13px; color:var(--muted);">2. Mobile OTP</div>
+    </div>
+
+    <div class="notice mb-24">
+      <strong>STEP 1 OF 2 · AADHAAR OTP</strong><br>
+      +91 98•••••345 &nbsp;·&nbsp; <small>Sent by UIDAI · Valid 10 min</small>
+    </div>
+
+    <div style="text-align:center; font-size:14px; color:var(--muted); margin-bottom:8px;">Enter 6-digit Aadhaar OTP</div>
+
+    <div class="otp-row">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric">
+    </div>
+
+    <div style="text-align:center; font-size:13px; color:var(--muted); margin-bottom:16px;">
+      Resend in <strong id="timer">07:45</strong> · <span style="color:var(--pink); cursor:pointer;" onclick="resendOTP()">Resend OTP</span>
+    </div>
+
+    <div class="notice notice-info mb-24">
+      🏛️ UIDAI Certified · Never share your OTP with anyone.
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" onclick="verifyOTP()">✔ Verify Aadhaar OTP →</button>
+    <a href="aadhar.html" class="btn btn-outline btn-full mt-16">← Back</a>
+  </div>
+
+</div>
+</div>
+<script>
+const inputs = document.querySelectorAll(".otp-input");
+inputs.forEach((input, i) => {
+  input.addEventListener("input", () => { if (input.value && i < inputs.length-1) inputs[i+1].focus(); });
+  input.addEventListener("keydown", e => { if (e.key==="Backspace" && !input.value && i > 0) inputs[i-1].focus(); });
+});
+
+function verifyOTP() {
+  let otp = "";
+  inputs.forEach(i => otp += i.value);
+  if (otp.length < 6) { alert("❌ Enter full 6-digit OTP"); return; }
+  alert("✅ OTP Verified!");
+  window.location.href = 'selfie.html';
+}
+
+let time = 465;
+const timerEl = document.getElementById("timer");
+const interval = setInterval(() => {
+  let min = Math.floor(time/60), sec = time%60;
+  timerEl.textContent = `${min}:${sec<10?"0"+sec:sec}`;
+  if (time > 0) time--; else clearInterval(interval);
+}, 1000);
+
+function resendOTP() { time = 465; alert("OTP Resent!"); }
+
+function toggleDark() { const d = document.body.classList.toggle('dark'); localStorage.setItem('dark', d?'1':'0'); document.querySelector('.dark-btn').textContent = d?'☀️':'🌙'; }
+window.addEventListener('load', () => { if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; } });
+</script>
+</body>
+</html>

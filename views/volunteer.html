@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volunteer Registration – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .type-card {
+    border: 2px solid #e8d0da; border-radius: 14px; padding: 20px;
+    cursor: pointer; transition: all .2s; text-align: center;
+  }
+  .type-card:hover { border-color: var(--pink); background: var(--pink-pale); }
+  .type-card.selected { border-color: var(--pink); background: var(--pink-pale); }
+  .type-card .icon { font-size: 32px; margin-bottom: 8px; }
+  .type-card h4 { font-size: 15px; margin-bottom: 4px; }
+  .type-card p { font-size: 12px; color: var(--muted); }
+  .gender-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .gender-btn {
+    padding: 14px; border-radius: 12px; border: 2px solid #e8d0da;
+    background: #fff; cursor: pointer; text-align: center; font-size: 14px;
+    font-weight: 500; transition: all .2s;
+  }
+  .gender-btn:hover, .gender-btn.selected { border-color: var(--pink); background: var(--pink-pale); color: var(--pink); }
+  .ngo-fields { display: none; }
+  .ngo-fields.show { display: block; }
+  .male-notice { display: none; }
+  .male-notice.show { display: block; }
+  body.dark .type-card { background: #1e1228; border-color: #3a2040; }
+  body.dark .type-card.selected { background: #2a1a30; }
+  body.dark .gender-btn { background: #1e1228; border-color: #3a2040; color: #f0e0f0; }
+  body.dark .gender-btn.selected { background: #2a1a30; border-color: var(--pink); color: var(--pink); }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="guardian.html">← Back to Community</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container-sm">
+
+  <div class="step-header">
+    <a href="guardian.html" class="step-back">←</a>
+    <div class="step-title">Guardian Registration</div>
+    <div class="step-badge">Step 1 of 6</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Eligibility Check</span><span>20%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:6px;">Eligibility Check 🛡️</h2>
+    <p class="text-muted" style="font-size:14px; margin-bottom:24px;">
+      City Safe Guardians protect communities. Both men and women can join — males must be affiliated with an NGO partner.
+    </p>
+
+    <!-- Gender -->
+    <div class="form-label" style="margin-bottom:8px;">Select Gender *</div>
+    <div class="gender-row">
+      <div class="gender-btn selected" id="btnFemale" onclick="selectGender('female')">👩 Female</div>
+      <div class="gender-btn" id="btnMale" onclick="selectGender('male')">👨 Male</div>
+    </div>
+
+    <!-- Male notice -->
+    <div class="notice male-notice" id="maleNotice" style="margin-bottom:16px;">
+      👨 <strong>Male volunteers must be NGO-affiliated.</strong><br>
+      Men can join as Guardian Volunteers only through a registered NGO partner. Select "NGO Partner" below.
+    </div>
+
+    <!-- Volunteer type -->
+    <div class="form-label" style="margin-bottom:8px; margin-top:16px;">Volunteer Type *</div>
+    <div class="type-grid">
+      <div class="type-card selected" id="typeIndividual" onclick="selectType('individual')">
+        <div class="icon">🙋</div>
+        <h4>Individual</h4>
+        <p>Register as an independent volunteer (females only)</p>
+      </div>
+      <div class="type-card" id="typeNgo" onclick="selectType('ngo')">
+        <div class="icon">🏢</div>
+        <h4>NGO Partner</h4>
+        <p>Register through a registered NGO alliance (open to all)</p>
+      </div>
+    </div>
+
+    <!-- NGO fields (shown when NGO selected) -->
+    <div class="ngo-fields" id="ngoFields">
+      <div class="form-group">
+        <label class="form-label">NGO / Organisation Name *</label>
+        <input type="text" id="ngoName" class="form-input" placeholder="e.g. Womenathon Innovations, iCall, iPartner">
+      </div>
+      <div class="form-group">
+        <label class="form-label">NGO Registration Number *</label>
+        <input type="text" id="ngoReg" class="form-input" placeholder="e.g. MH/2019/0012345">
+      </div>
+      <div class="notice notice-info">
+        🏛️ Your NGO registration will be verified against the MCA / FCRA database before approval.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Age & City -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Age (18–60) *</label>
+        <select id="age" class="form-input form-select">
+          <option value="" disabled selected>Select age</option>
+          <script>for(let i=18;i<=60;i++) document.write(`<option>${i}</option>`)</script>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">City *</label>
+        <select id="city" class="form-input form-select">
+          <option value="" disabled selected>Select city</option>
+          <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option><option>Hyderabad</option>
+          <option>Ahmedabad</option><option>Chennai</option><option>Kolkata</option><option>Pune</option>
+          <option>Surat</option><option>Jaipur</option><option>Lucknow</option><option>Nagpur</option>
+          <option>Indore</option><option>Thane</option><option>Bhopal</option><option>Nashik</option>
+          <option>Patna</option><option>Vadodara</option><option>Ludhiana</option><option>Agra</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Eligibility summary -->
+    <div class="notice notice-success mb-24" id="eligSummary">
+      ✅ Female Individual &nbsp;·&nbsp; ✅ Age 18–60 &nbsp;·&nbsp; ✅ Lives in India &nbsp;·&nbsp; ✅ Police Verified
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" onclick="validateForm()">Confirm Eligibility →</button>
+  </div>
+
+</div>
+</div>
+
+<script>
+let selectedGender = 'female';
+let selectedType = 'individual';
+
+function selectGender(g) {
+  selectedGender = g;
+  document.getElementById('btnFemale').classList.toggle('selected', g === 'female');
+  document.getElementById('btnMale').classList.toggle('selected', g === 'male');
+  document.getElementById('maleNotice').classList.toggle('show', g === 'male');
+
+  // Males must be NGO
+  if (g === 'male') {
+    selectType('ngo');
+    document.getElementById('typeIndividual').style.opacity = '0.4';
+    document.getElementById('typeIndividual').style.pointerEvents = 'none';
+  } else {
+    document.getElementById('typeIndividual').style.opacity = '1';
+    document.getElementById('typeIndividual').style.pointerEvents = 'auto';
+  }
+  updateSummary();
+}
+
+function selectType(t) {
+  selectedType = t;
+  document.getElementById('typeIndividual').classList.toggle('selected', t === 'individual');
+  document.getElementById('typeNgo').classList.toggle('selected', t === 'ngo');
+  document.getElementById('ngoFields').classList.toggle('show', t === 'ngo');
+  updateSummary();
+}
+
+function updateSummary() {
+  const gLabel = selectedGender === 'female' ? '👩 Female' : '👨 Male (NGO)';
+  const tLabel = selectedType === 'ngo' ? '🏢 NGO Partner' : '🙋 Individual';
+  document.getElementById('eligSummary').innerHTML =
+    `✅ ${gLabel} &nbsp;·&nbsp; ✅ ${tLabel} &nbsp;·&nbsp; ✅ Age 18–60 &nbsp;·&nbsp; ✅ Police Verified`;
+}
+
+function validateForm() {
+  const age = parseInt(document.getElementById("age").value);
+  const city = document.getElementById("city").value;
+
+  if (!age || age < 18 || age > 60) { alert("❌ Please select a valid age between 18 and 60."); return; }
+  if (!city) { alert("❌ Please select your city."); return; }
+
+  if (selectedGender === 'male' && selectedType !== 'ngo') {
+    alert("❌ Male volunteers must register through an NGO partner."); return;
+  }
+
+  if (selectedType === 'ngo') {
+    const ngoName = document.getElementById('ngoName').value.trim();
+    const ngoReg = document.getElementById('ngoReg').value.trim();
+    if (!ngoName) { alert("❌ Please enter your NGO name."); return; }
+    if (!ngoReg) { alert("❌ Please enter your NGO registration number."); return; }
+    sessionStorage.setItem("ngoName", ngoName);
+    sessionStorage.setItem("ngoReg", ngoReg);
+  }
+
+  sessionStorage.setItem("volAge", age);
+  sessionStorage.setItem("volCity", city);
+  sessionStorage.setItem("volGender", selectedGender);
+  sessionStorage.setItem("volType", selectedType);
+
+  window.location.href = 'aadhar.html';
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d?'1':'0');
+  document.querySelector('.dark-btn').textContent = d?'☀️':'🌙';
+}
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark')==='1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent='☀️'; }
+});
+</script>
+</body>
+</html>

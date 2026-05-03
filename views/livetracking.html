@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Tracking – City Safe</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Leaflet.js real map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  #map {
+    width: 100%;
+    height: 420px;
+    border-radius: 16px;
+    z-index: 1;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .info-box {
+    background: #f9f0f5;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .info-box span {
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .info-box b {
+    font-size: 14px;
+    word-break: break-all;
+  }
+
+  body.dark .info-box { background: #2a1a30; }
+
+  .live-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: #28c76f;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  .address-bar {
+    background: var(--pink-pale);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  body.dark .address-bar { background: #2a1a30; }
+
+  .history-list { max-height: 220px; overflow-y: auto; }
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0e0e8;
+    font-size: 13px;
+  }
+  .history-item:last-child { border-bottom: none; }
+  body.dark .history-item { border-color: #3a2040; }
+
+  /* Override Leaflet popup to match theme */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(255,45,122,.2) !important;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="livetracking.html" class="active">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container-md">
+
+  <!-- Header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <div>
+      <h1 style="font-size:26px; font-weight:700;">Live Tracking 📍</h1>
+      <div style="font-size:14px; color:var(--muted);">
+        <span class="live-dot"></span>Real-time GPS · Auto-updating every 10s
+      </div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-outline btn-sm" onclick="centerMap()">🎯 Center</button>
+      <button class="btn btn-danger" onclick="triggerSOS()">🚨 SOS</button>
+    </div>
+  </div>
+
+  <!-- Address bar -->
+  <div class="address-bar" id="addressBar">
+    📍 <span id="addressText">Fetching your location...</span>
+  </div>
+
+  <!-- Map card -->
+  <div class="card mb-20" style="padding:16px;">
+    <div id="map"></div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+      <div class="info-box"><span>Latitude</span><b id="infoLat">—</b></div>
+      <div class="info-box"><span>Longitude</span><b id="infoLng">—</b></div>
+      <div class="info-box"><span>Accuracy</span><b id="infoAcc" class="text-pink">—</b></div>
+      <div class="info-box"><span>Updated</span><b id="infoTime">—</b></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:1;" onclick="shareLocation()">📤 Share Location</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="openInMaps()">🗺️ Open in Maps</button>
+      <button class="btn btn-white" style="flex:1;" onclick="loadHistory()">📋 History</button>
+    </div>
+  </div>
+
+  <!-- Geo-fence + controls -->
+  <div class="grid-2" style="gap:16px;">
+
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div>
+          <div style="font-weight:600;">Geo-fence</div>
+          <div style="font-size:13px; color:var(--muted);" id="fenceStatus">500m radius · Active</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="geofenceToggle" checked onchange="toggleGeofence()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div style="font-size:13px; color:var(--muted);" id="fenceAlert"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:600; margin-bottom:8px;">Tracking Mode</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" id="btnWatch" onclick="startWatching()">▶ Start Watch</button>
+        <button class="btn btn-outline btn-sm" id="btnStop" onclick="stopWatching()" style="display:none;">⏹ Stop</button>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="watchStatus">Click Start Watch for continuous tracking</div>
+    </div>
+
+  </div>
+
+  <!-- History panel -->
+  <div class="card mt-16" id="historyPanel" style="display:none;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <div style="font-weight:600;">Location History</div>
+      <button onclick="document.getElementById('historyPanel').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:18px;">✕</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div style="color:var(--muted); font-size:14px; text-align:center; padding:20px;">Loading...</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+let map, userMarker, accuracyCircle, geofenceCircle;
+let watchId = null;
+let currentLat = null, currentLng = null;
+let geofenceCenter = null;
+const GEOFENCE_RADIUS = 500; // metres
+
+// ── INIT MAP ──────────────────────────────────────────────────────────────────
+function initMap(lat, lng) {
+  if (map) { map.remove(); }
+
+  map = L.map('map', { zoomControl: true }).setView([lat, lng], 15);
+
+  // OpenStreetMap tiles (free, no API key)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Custom pink marker
+  const pinkIcon = L.divIcon({
+    html: `<div style="
+      width:20px; height:20px;
+      background:#ff2d7a;
+      border:3px solid #fff;
+      border-radius:50%;
+      box-shadow:0 0 0 4px rgba(255,45,122,.3), 0 2px 8px rgba(0,0,0,.3);
+    "></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    className: ''
+  });
+
+  userMarker = L.marker([lat, lng], { icon: pinkIcon })
+    .addTo(map)
+    .bindPopup('<b>📍 You are here</b><br>City Safe is tracking your location.')
+    .openPopup();
+
+  return map;
+}
+
+// ── UPDATE POSITION ───────────────────────────────────────────────────────────
+async function updatePosition(pos) {
+  const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+  currentLat = lat;
+  currentLng = lng;
+
+  // Update map
+  if (!map) {
+    initMap(lat, lng);
+  } else {
+    map.setView([lat, lng], map.getZoom());
+    userMarker.setLatLng([lat, lng]);
+  }
+
+  // Accuracy circle
+  if (accuracyCircle) accuracyCircle.remove();
+  accuracyCircle = L.circle([lat, lng], {
+    radius: accuracy,
+    color: '#ff2d7a',
+    fillColor: '#ff2d7a',
+    fillOpacity: 0.08,
+    weight: 1
+  }).addTo(map);
+
+  // Geofence circle (set once on first fix)
+  if (!geofenceCenter && document.getElementById('geofenceToggle').checked) {
+    geofenceCenter = { lat, lng };
+    drawGeofence(lat, lng);
+  }
+
+  // Check geofence breach
+  if (geofenceCenter && document.getElementById('geofenceToggle').checked) {
+    const dist = getDistance(lat, lng, geofenceCenter.lat, geofenceCenter.lng);
+    const alertEl = document.getElementById('fenceAlert');
+    if (dist > GEOFENCE_RADIUS) {
+      alertEl.innerHTML = `<span style="color:#ff4444;">⚠️ Geo-fence breached! ${Math.round(dist)}m from safe zone.</span>`;
+    } else {
+      alertEl.innerHTML = `<span style="color:#28c76f;">✅ Inside safe zone · ${Math.round(dist)}m from centre</span>`;
+    }
+  }
+
+  // Update info boxes
+  document.getElementById('infoLat').textContent = lat.toFixed(6);
+  document.getElementById('infoLng').textContent = lng.toFixed(6);
+  document.getElementById('infoAcc').textContent = `±${Math.round(accuracy)}m`;
+  document.getElementById('infoTime').textContent = new Date().toLocaleTimeString();
+
+  // Reverse geocode for human-readable address
+  reverseGeocode(lat, lng);
+
+  // Save to backend
+  fetch('/api/location', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ latitude: lat, longitude: lng, address: `${lat},${lng}` })
+  }).catch(() => {});
+}
+
+// ── REVERSE GEOCODE (Nominatim – free) ───────────────────────────────────────
+async function reverseGeocode(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    const data = await res.json();
+    const addr = data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    const short = data.address
+      ? [data.address.suburb, data.address.city || data.address.town || data.address.village, data.address.state].filter(Boolean).join(', ')
+      : addr;
+
+    document.getElementById('addressText').textContent = short || addr;
+    document.getElementById('locLabel') && (document.getElementById('locLabel').textContent = short);
+
+    // Update marker popup
+    if (userMarker) {
+      userMarker.setPopupContent(`<b>📍 You are here</b><br><small>${short}</small>`);
+    }
+
+    // Save with real address
+    fetch('/api/location', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: lat, longitude: lng, address: short })
+    }).catch(() => {});
+
+  } catch {
+    document.getElementById('addressText').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  }
+}
+
+// ── GEOFENCE ──────────────────────────────────────────────────────────────────
+function drawGeofence(lat, lng) {
+  if (geofenceCircle) geofenceCircle.remove();
+  geofenceCircle = L.circle([lat, lng], {
+    radius: GEOFENCE_RADIUS,
+    color: '#ff2d7a',
+    fillColor: '#ff2d7a',
+    fillOpacity: 0.05,
+    dashArray: '8 4',
+    weight: 2
+  }).addTo(map);
+}
+
+function toggleGeofence() {
+  const on = document.getElementById('geofenceToggle').checked;
+  document.getElementById('fenceStatus').textContent = on ? '500m radius · Active' : 'Disabled';
+  document.getElementById('fenceAlert').textContent = '';
+  if (on && currentLat) {
+    geofenceCenter = { lat: currentLat, lng: currentLng };
+    drawGeofence(currentLat, currentLng);
+  } else {
+    if (geofenceCircle) geofenceCircle.remove();
+    geofenceCenter = null;
+  }
+}
+
+// ── CONTINUOUS WATCH ──────────────────────────────────────────────────────────
+function startWatching() {
+  if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+  if (watchId !== null) return;
+
+  watchId = navigator.geolocation.watchPosition(
+    updatePosition,
+    err => { document.getElementById('watchStatus').textContent = 'Error: ' + err.message; },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+  );
+
+  document.getElementById('btnWatch').style.display = 'none';
+  document.getElementById('btnStop').style.display = 'inline-flex';
+  document.getElementById('watchStatus').innerHTML = '<span style="color:#28c76f;">● Continuous tracking active</span>';
+}
+
+function stopWatching() {
+  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  document.getElementById('btnWatch').style.display = 'inline-flex';
+  document.getElementById('btnStop').style.display = 'none';
+  document.getElementById('watchStatus').textContent = 'Tracking stopped.';
+}
+
+// ── SHARE / OPEN MAPS ─────────────────────────────────────────────────────────
+function shareLocation() {
+  if (!currentLat) { alert('Location not available yet.'); return; }
+  const text = `📍 My location: https://maps.google.com/?q=${currentLat},${currentLng}`;
+  if (navigator.share) { navigator.share({ title: 'My Location – City Safe', text }); }
+  else { navigator.clipboard.writeText(text).then(() => alert('📍 Location link copied!')); }
+}
+
+function openInMaps() {
+  if (!currentLat) { alert('Location not available yet.'); return; }
+  window.open(`https://www.google.com/maps?q=${currentLat},${currentLng}`, '_blank');
+}
+
+function centerMap() {
+  if (map && currentLat) map.setView([currentLat, currentLng], 16);
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+async function loadHistory() {
+  const panel = document.getElementById('historyPanel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth' });
+
+  try {
+    const res = await fetch('/api/location/history');
+    const data = await res.json();
+    const list = document.getElementById('historyList');
+
+    if (!data.success || data.history.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px;">No history yet.</div>';
+      return;
+    }
+
+    list.innerHTML = data.history.map(h => `
+      <div class="history-item">
+        <span style="font-size:18px;">📍</span>
+        <div style="flex:1;">
+          <div style="font-weight:500;">${h.address || `${h.latitude.toFixed(4)}, ${h.longitude.toFixed(4)}`}</div>
+          <div style="font-size:12px; color:var(--muted);">${h.latitude.toFixed(5)}, ${h.longitude.toFixed(5)}</div>
+        </div>
+        <div style="font-size:11px; color:var(--muted); white-space:nowrap;">${new Date(h.created_at).toLocaleString()}</div>
+      </div>`).join('');
+
+    // Plot history points on map
+    data.history.slice(0, 10).forEach(h => {
+      L.circleMarker([h.latitude, h.longitude], {
+        radius: 5, color: '#ff9cc4', fillColor: '#ff9cc4', fillOpacity: 0.7, weight: 1
+      }).addTo(map).bindPopup(`<small>${new Date(h.created_at).toLocaleString()}</small>`);
+    });
+
+  } catch {
+    document.getElementById('historyList').innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px;">Could not load history.</div>';
+  }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function getDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function triggerSOS() { window.location.href = 'sos.html'; }
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark') === '1') {
+    document.body.classList.add('dark');
+    document.querySelector('.dark-btn').textContent = '☀️';
+  }
+
+  if (!navigator.geolocation) {
+    document.getElementById('addressText').textContent = 'Geolocation not supported by your browser.';
+    // Fallback: show world map
+    initMap(20.5937, 78.9629);
+    return;
+  }
+
+  // One-time fix first
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      updatePosition(pos);
+      // Auto-start watching after first fix
+      startWatching();
+    },
+    err => {
+      document.getElementById('addressText').textContent = 'Location access denied. Please allow location permission.';
+      initMap(19.076, 72.877); // Mumbai fallback
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+});
+</script>
+</body>
+</html>

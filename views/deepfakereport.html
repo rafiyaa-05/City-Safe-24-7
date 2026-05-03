@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Deepfake – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .ai-result { background: #fff; border-radius: 14px; padding: 20px; border: 2px solid #f5a8c3; }
+  .confidence-bar { height: 10px; background: #f0e0e8; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+  .confidence-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--pink-light)); border-radius: 10px; transition: width .8s; }
+  .preview-img, .preview-video { width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html" class="active">⚠️ Report</a>
+  <a href="guardian.html">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container-md">
+
+  <div class="hero-header">
+    <span style="background:rgba(255,255,255,.2); padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600;">🛡️ CYBER SAFETY SHIELD</span>
+    <h1 style="margin-top:12px;">Report Deepfake & Harassment 🌸</h1>
+    <p>AI-powered evidence analysis · FIR generation support</p>
+  </div>
+
+  <div class="grid-2" style="gap:24px; align-items:start;">
+
+    <!-- Upload -->
+    <div>
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Upload Evidence</h3>
+        <input type="file" id="evidenceInput" accept=".jpg,.jpeg,.png,.mp4" style="display:none">
+
+        <div class="upload-box" onclick="document.getElementById('evidenceInput').click()">
+          <div class="icon">📁</div>
+          <h3>Upload Photo / Video</h3>
+          <p style="font-size:13px; color:var(--muted); margin-top:6px;">Supports JPG, PNG, MP4 · Max 50MB</p>
+          <button class="btn btn-primary btn-sm mt-16" id="uploadBtn" onclick="event.stopPropagation(); document.getElementById('evidenceInput').click()">Choose File / फाइल चुनें</button>
+        </div>
+
+        <div id="fileDetails" style="margin-top:14px; font-size:13px; color:var(--muted);"></div>
+        <div id="previewContainer"></div>
+      </div>
+    </div>
+
+    <!-- AI Result -->
+    <div>
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+          <h3>AI Analysis Result ✨</h3>
+          <span style="background:var(--pink-pale); color:var(--pink); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600;">LIVE AI</span>
+        </div>
+
+        <div class="ai-result">
+          <div style="font-weight:600; color:var(--pink);" id="aiVerdict">⚠️ Upload a file to analyze</div>
+          <div style="font-size:13px; color:var(--muted); margin-top:4px;" id="aiDesc">AI will detect manipulation, GAN artifacts, and deepfake signatures.</div>
+          <div class="confidence-bar"><div class="confidence-fill" id="confBar" style="width:0%"></div></div>
+          <div style="font-size:12px; color:var(--muted);" id="confLabel">Confidence: —</div>
+        </div>
+
+        <div class="mt-16" id="aiTags"></div>
+
+        <div class="notice mt-16" id="reportIdBox" style="display:none;">
+          <strong>✅ Report Submitted</strong><br>
+          <span id="reportIdText"></span>
+        </div>
+
+        <div class="mt-16" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div style="background:#f9f0f5; padding:8px 12px; border-radius:10px; font-size:12px;">📍 Andheri West</div>
+          <div style="background:#f9f0f5; padding:8px 12px; border-radius:10px; font-size:12px;" id="reportTime">🕒 —</div>
+          <div style="background:#f9f0f5; padding:8px 12px; border-radius:10px; font-size:12px;">🔒 Sealed</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+const evidenceInput = document.getElementById('evidenceInput');
+
+evidenceInput.addEventListener('change', () => {
+  const file = evidenceInput.files[0];
+  if (!file) return;
+  const valid = ['image/jpeg','image/png','video/mp4'];
+  if (!valid.includes(file.type)) { document.getElementById('fileDetails').textContent = 'Unsupported file type.'; return; }
+
+  const sizeMb = (file.size / 1024 / 1024).toFixed(2);
+  document.getElementById('fileDetails').innerHTML = `<strong>Selected:</strong> ${file.name} &nbsp;|&nbsp; <strong>Size:</strong> ${sizeMb} MB`;
+  document.getElementById('uploadBtn').textContent = 'Change File';
+  document.getElementById('reportTime').textContent = '🕒 ' + new Date().toLocaleTimeString();
+
+  const url = URL.createObjectURL(file);
+  const pc = document.getElementById('previewContainer');
+  pc.innerHTML = '';
+  if (file.type.startsWith('image/')) {
+    const img = document.createElement('img'); img.src = url; img.className = 'preview-img'; pc.appendChild(img);
+  } else {
+    const vid = document.createElement('video'); vid.src = url; vid.controls = true; vid.className = 'preview-video'; pc.appendChild(vid);
+  }
+
+  submitReport(file);
+});
+
+async function submitReport(file) {
+  document.getElementById('aiVerdict').textContent = '⏳ Analyzing...';
+  document.getElementById('aiDesc').textContent = 'AI is scanning for manipulation signatures...';
+  const formData = new FormData();
+  formData.append('evidence', file);
+  try {
+    const res = await fetch('/api/report/deepfake', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('confBar').style.width = data.aiConfidence + '%';
+      document.getElementById('confLabel').textContent = `Confidence: ${data.aiConfidence}%`;
+      document.getElementById('aiVerdict').textContent = data.aiConfidence > 80 ? '⚠️ Likely Deepfake Detected' : '🔍 Possible Manipulation';
+      document.getElementById('aiDesc').textContent = data.analysis.verdict;
+      document.getElementById('aiTags').innerHTML = data.analysis.tags.map(t => `<span class="tag">${t}</span>`).join('');
+      document.getElementById('reportIdBox').style.display = 'block';
+      document.getElementById('reportIdText').textContent = 'Report ID: ' + data.reportId;
+    }
+  } catch(e) { document.getElementById('aiVerdict').textContent = '❌ Analysis failed'; }
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark') === '1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent = '☀️'; }
+});
+</script>
+</body>
+</html>

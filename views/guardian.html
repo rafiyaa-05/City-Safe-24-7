@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardian Network – City Safe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Filter bar */
+  .filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center;
+  }
+  .filter-btn {
+    padding: 7px 16px; border-radius: 20px; border: 1.5px solid #e8d0da;
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--pink-pale); border-color: var(--pink); color: var(--pink); }
+  body.dark .filter-btn { background: #1e1228; border-color: #3a2040; color: #f0e0f0; }
+  body.dark .filter-btn.active { background: #2a1a30; }
+
+  /* Member card */
+  .member-card {
+    background: #fff; border-radius: 14px; padding: 16px;
+    border: 1px solid #f0d8e4; display: flex; align-items: center;
+    gap: 14px; transition: box-shadow .2s;
+  }
+  .member-card:hover { box-shadow: 0 4px 16px rgba(255,45,122,.12); }
+  body.dark .member-card { background: #1e1228; border-color: #3a2040; }
+
+  .member-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .member-info { flex: 1; min-width: 0; }
+  .member-info h4 { font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .member-info .meta { font-size: 12px; color: var(--muted); }
+  .member-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+  .badge-approved { background: #eafff4; color: #00aa55; }
+  .badge-pending  { background: #fff8e6; color: #cc8800; }
+  .badge-ngo      { background: #f0eaff; color: #7b2fff; }
+
+  .members-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:700px){ .members-grid { grid-template-columns: 1fr; } }
+
+  .members-loading { text-align: center; padding: 32px; color: var(--muted); }
+  .spinner { width: 28px; height: 28px; border: 3px solid #f0d8e4; border-top-color: var(--pink); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .search-input { flex: 1; min-width: 180px; }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="logo">🛡️ City Safe</a>
+  <a href="index.html">🏠 Home</a>
+  <a href="livetracking.html">📍 Track</a>
+  <a href="deepfakereport.html">⚠️ Report</a>
+  <a href="guardian.html" class="active">👥 Community</a>
+  <a href="profile.html">👤 Profile</a>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+</nav>
+
+<div class="page">
+<div class="container">
+
+  <!-- Hero header -->
+  <div class="hero-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; margin-bottom:28px;">
+    <div>
+      <div style="font-size:12px; font-weight:600; opacity:.8; margin-bottom:6px;">COMMUNITY 🛡️</div>
+      <h1>Guardian Network</h1>
+      <p>Verified volunteers — women, men via NGOs — protecting communities together.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; min-width:280px;">
+      <div class="stat-card" style="text-align:center;">
+        <b id="statTotal" style="font-size:28px; display:block;">⏳</b>
+        <small>Total Guardians</small>
+      </div>
+      <div class="stat-card" style="text-align:center;">
+        <b id="statCities" style="font-size:28px; display:block;">⏳</b>
+        <small>Cities</small>
+      </div>
+      <div class="stat-card" style="text-align:center;">
+        <b id="statNgo" style="font-size:28px; display:block;">⏳</b>
+        <small>NGO Partners</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="gap:28px; align-items:start;">
+
+    <!-- LEFT: Register + How it works -->
+    <div>
+      <div class="card card-pink mb-24">
+        <h2 style="margin-bottom:8px;">Become a Guardian 🛡️</h2>
+        <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">
+          Women can join individually. Men can join through an NGO partner. Background check required for all.
+        </p>
+        <div style="margin-bottom:16px; display:flex; flex-wrap:wrap; gap:6px;">
+          <span class="tag">👩 Women – Individual</span>
+          <span class="tag">👨 Men – NGO Only</span>
+          <span class="tag">✔ Age 18–60</span>
+          <span class="tag tag-green">✔ Police Verified</span>
+          <span class="tag tag-green">✔ Aadhaar Verified</span>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="window.location.href='volunteer.html'">🛡️ Register as Guardian →</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:16px;">How It Works</h3>
+        <div class="timeline-step">
+          <div class="timeline-icon t-done">1</div>
+          <div class="timeline-text"><strong>Eligibility Check</strong><span>Gender, age, type (individual / NGO)</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-icon t-done">2</div>
+          <div class="timeline-text"><strong>Aadhaar Verification</strong><span>Verhoeff checksum · UIDAI format</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-icon t-done">3</div>
+          <div class="timeline-text"><strong>OTP Verification</strong><span>Two-step security confirmation</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-icon t-progress">4</div>
+          <div class="timeline-text"><strong>Selfie & Profile</strong><span>Live selfie + complete your details</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-icon t-pending">5</div>
+          <div class="timeline-text"><strong>Background Check</strong><span>Police + NGO verification (3–5 days)</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-icon t-pending">6</div>
+          <div class="timeline-text"><strong>Guardian Badge</strong><span>Listed in the Guardian Network</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Members list -->
+    <div>
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0;">Guardian Members</h3>
+          <button class="btn btn-outline btn-sm" onclick="loadMembers()">🔄 Refresh</button>
+        </div>
+
+        <!-- Search + filters -->
+        <div class="filter-bar">
+          <input type="text" id="searchInput" class="form-input search-input" placeholder="🔍 Search by name or city..." oninput="filterMembers()">
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+          <button class="filter-btn" onclick="setFilter('female', this)">👩 Female</button>
+          <button class="filter-btn" onclick="setFilter('male', this)">👨 Male (NGO)</button>
+          <button class="filter-btn" onclick="setFilter('ngo', this)">🏢 NGO</button>
+          <button class="filter-btn" onclick="setFilter('approved', this)">✅ Approved</button>
+          <button class="filter-btn" onclick="setFilter('pending', this)">⏳ Pending</button>
+        </div>
+
+        <div id="membersContainer">
+          <div class="members-loading">
+            <div class="spinner"></div>Loading guardians...
+          </div>
+        </div>
+
+        <div id="memberCount" style="font-size:13px; color:var(--muted); margin-top:12px; text-align:right;"></div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card mt-16">
+        <div class="section-title">Recent Activity</div>
+        <div class="activity-item">
+          <div class="activity-avatar">A</div>
+          <div><b>Anjali Patil ✔</b><br><small style="color:var(--muted);">Escorted a woman to Andheri Station safely at 10 PM</small></div>
+          <div class="activity-time">20 min</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar" style="background:#3498db;">R</div>
+          <div><b>Rahul Mehta ✔ <span style="font-size:11px; background:#f0eaff; color:#7b2fff; padding:2px 7px; border-radius:10px;">NGO</span></b><br><small style="color:var(--muted);">Coordinated safe transport for 3 women near CST</small></div>
+          <div class="activity-time">45 min</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar" style="background:#9b59b6;">S</div>
+          <div><b>Sunita Rao ✔</b><br><small style="color:var(--muted);">Reported suspicious activity near Dadar Market</small></div>
+          <div class="activity-time">1 hr</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar" style="background:#27ae60;">V</div>
+          <div><b>Vikram Nair ✔ <span style="font-size:11px; background:#f0eaff; color:#7b2fff; padding:2px 7px; border-radius:10px;">NGO</span></b><br><small style="color:var(--muted);">Helped file a deepfake complaint at Bandra police station</small></div>
+          <div class="activity-time">2 hr</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+let allMembers = [];
+let activeFilter = 'all';
+
+const avatarColors = ['#ff2d7a','#9b59b6','#3498db','#27ae60','#e67e22','#e74c3c','#1abc9c','#2980b9'];
+
+function avatarColor(name) {
+  let h = 0;
+  for (let c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+  return avatarColors[Math.abs(h) % avatarColors.length];
+}
+
+async function loadMembers() {
+  document.getElementById('membersContainer').innerHTML = '<div class="members-loading"><div class="spinner"></div>Loading guardians...</div>';
+  try {
+    const res = await fetch('/api/guardians');
+    const data = await res.json();
+    allMembers = data.members || [];
+
+    // Update stats from real data
+    const cities = new Set(allMembers.map(m => m.city).filter(Boolean));
+    const ngos   = allMembers.filter(m => m.volunteer_type === 'ngo').length;
+
+    document.getElementById('statTotal').textContent = allMembers.length;
+    document.getElementById('statCities').textContent = cities.size;
+    document.getElementById('statNgo').textContent = ngos;
+
+    renderMembers(allMembers);
+  } catch {
+    // Even on error, show zeros not dashes
+    document.getElementById('statTotal').textContent = '0';
+    document.getElementById('statCities').textContent = '0';
+    document.getElementById('statNgo').textContent = '0';
+    document.getElementById('membersContainer').innerHTML =
+      '<div class="members-loading">⚠️ Could not load members. Make sure the server is running.</div>';
+  }
+}
+
+function renderMembers(list) {
+  const container = document.getElementById('membersContainer');
+  document.getElementById('memberCount').textContent = `Showing ${list.length} guardian${list.length !== 1 ? 's' : ''}`;
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="members-loading">No guardians found. Be the first to register!</div>';
+    return;
+  }
+
+  container.innerHTML = `<div class="members-grid">${list.map(m => {
+    const initials = m.full_name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+    const color = avatarColor(m.full_name);
+    const isNgo = m.volunteer_type === 'ngo';
+    const statusClass = m.status === 'approved' ? 'badge-approved' : 'badge-pending';
+    const statusLabel = m.status === 'approved' ? '✅ Approved' : '⏳ Pending';
+    const genderIcon = m.gender === 'male' ? '👨' : '👩';
+
+    return `<div class="member-card">
+      <div class="member-avatar" style="background:${color};">${initials}</div>
+      <div class="member-info">
+        <h4>${genderIcon} ${m.full_name}</h4>
+        <div class="meta">
+          ${m.city || '—'} &nbsp;·&nbsp; ${m.app_id}
+          ${isNgo ? `<br>🏢 ${m.ngo_name || 'NGO Partner'}` : ''}
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+        <span class="member-badge ${statusClass}">${statusLabel}</span>
+        ${isNgo ? '<span class="member-badge badge-ngo">NGO</span>' : ''}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterMembers();
+}
+
+function filterMembers() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = allMembers;
+
+  if (activeFilter === 'female') filtered = filtered.filter(m => m.gender === 'female');
+  else if (activeFilter === 'male') filtered = filtered.filter(m => m.gender === 'male');
+  else if (activeFilter === 'ngo') filtered = filtered.filter(m => m.volunteer_type === 'ngo');
+  else if (activeFilter === 'approved') filtered = filtered.filter(m => m.status === 'approved');
+  else if (activeFilter === 'pending') filtered = filtered.filter(m => m.status === 'pending');
+
+  if (search) {
+    filtered = filtered.filter(m =>
+      m.full_name.toLowerCase().includes(search) ||
+      (m.city || '').toLowerCase().includes(search) ||
+      (m.ngo_name || '').toLowerCase().includes(search)
+    );
+  }
+
+  renderMembers(filtered);
+}
+
+function toggleDark() {
+  const d = document.body.classList.toggle('dark');
+  localStorage.setItem('dark', d ? '1' : '0');
+  document.querySelector('.dark-btn').textContent = d ? '☀️' : '🌙';
+}
+
+window.addEventListener('load', () => {
+  if (localStorage.getItem('dark') === '1') { document.body.classList.add('dark'); document.querySelector('.dark-btn').textContent = '☀️'; }
+  loadMembers();
+});
+</script>
+</body>
+</html>

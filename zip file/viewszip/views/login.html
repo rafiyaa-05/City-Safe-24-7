@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hifazat Login</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f3cbd6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* PHONE */
+.phone {
+  width: 360px;
+  height: 720px;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  background: linear-gradient(160deg, #ff6fa5, #f7a1c0, #fbd0da);
+  position: relative;
+}
+
+/* TOP BAR */
+.top-bar {
+  position: absolute;
+  top: 15px;
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #222;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-top: 80px;
+  color: white;
+}
+
+.header h1 {
+  font-size: 24px;
+}
+
+.header p {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* CARD */
+.card {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 65%;
+  background: #f4f4f4;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 20px;
+}
+
+.card h2 {
+  margin-bottom: 5px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+/* INPUT */
+.label {
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 15px;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #eee;
+}
+
+.prefix {
+  margin-right: 10px;
+  font-size: 13px;
+}
+
+.input-group input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+}
+
+.eye {
+  cursor: pointer;
+}
+
+/* LINKS */
+.link {
+  text-align: right;
+  font-size: 12px;
+  color: #ff2c8b;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+/* BUTTON */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  margin-top: 20px;
+  background: linear-gradient(to right, #ff4da6, #ff0077);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* OR */
+.or {
+  text-align: center;
+  margin: 15px 0;
+  font-size: 13px;
+  color: #888;
+}
+
+/* ALT BUTTONS */
+.alt {
+  display: flex;
+  gap: 10px;
+}
+
+.alt div {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 15px;
+  border: 1px solid #eee;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.footer span {
+  color: #ff2c8b;
+  cursor: pointer;
+}
+
+.note {
+  font-size: 11px;
+  color: #999;
+  margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div style="font-size:30px;">🛡️</div>
+    <h1>Welcome Back 💕</h1>
+    <p>Your safety guardian is here</p>
+  </div>
+
+  <!-- LOGIN CARD -->
+  <div class="card">
+
+    <h2>Sign In to Hifazat 🌸</h2>
+    <div class="sub">Secure login for women of Maharashtra</div>
+
+    <div class="label">Email</div>
+    <div class="input-group">
+      
+      <input type="text" name="email" placeholder="Enter Email">
+    </div>
+
+    <div class="label">Password</div>
+    <div class="input-group">
+      <input type="password" id="password" placeholder="••••••••••">
+      <div class="eye" onclick="togglePassword()">👁️</div>
+    </div>
+
+    <div class="link">Forgot? Use OTP Login →</div>
+
+<form action="/login" method="POST">
+
+  <button class="btn" type="submit">💞 Login Securely</button>
+
+</form>
+    <div class="or">OR</div>
+
+    <div class="alt">
+      <div>📱 OTP Login</div>
+      <div>🆔 Aadhaar SSO</div>
+    </div>
+
+    <div class="footer">
+      Don't have an account? <a href="registration.html" style="color:#ff2c8b; text-decoration:none; font-weight:bold;">Register here 💕</a>
+      <div class="note">Women & Girls only · Maharashtra residents</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function togglePassword() {
+  let input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+</script>
+
+</body>
+</html>
